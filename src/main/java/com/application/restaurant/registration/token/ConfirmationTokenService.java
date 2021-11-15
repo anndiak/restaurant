@@ -1,4 +1,4 @@
-package com.application.restaurant.email_validation.registration.token;
+package com.application.restaurant.registration.token;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;

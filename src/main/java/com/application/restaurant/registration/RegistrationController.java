@@ -1,4 +1,4 @@
-package com.application.restaurant.email_validation.registration;
+package com.application.restaurant.registration;
 
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;

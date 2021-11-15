@@ -1,11 +1,11 @@
-package com.application.restaurant.email_validation.registration;
+package com.application.restaurant.registration;
 
-import com.application.restaurant.email_validation.appuser.AppUser;
-import com.application.restaurant.email_validation.appuser.AppUserRole;
-import com.application.restaurant.email_validation.appuser.AppUserService;
-import com.application.restaurant.email_validation.email.EmailSender;
-import com.application.restaurant.email_validation.registration.token.ConfirmationToken;
-import com.application.restaurant.email_validation.registration.token.ConfirmationTokenService;
+import com.application.restaurant.email.EmailSender;
+import com.application.restaurant.registration.token.ConfirmationToken;
+import com.application.restaurant.registration.token.ConfirmationTokenService;
+import com.application.restaurant.model.User;
+import com.application.restaurant.model.UserRoles;
+import com.application.restaurant.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class RegistrationService {
 
-    private final AppUserService appUserService;
+    private final UserService userService;
     private final EmailValidator emailValidator;
     private final ConfirmationTokenService confirmationTokenService;
     private final EmailSender emailSender;
@@ -25,13 +25,13 @@ public class RegistrationService {
         if(!isValidEmail) {
             throw new IllegalStateException("Email is not valid");
         }
-        String token = appUserService.sighUpUser(
-                new AppUser(
+        String token = userService.sighUpUser(
+                new User(
                         request.getFirstName(),
                         request.getLastName(),
                         request.getEmail(),
                         request.getPassword(),
-                        AppUserRole.USER
+                        UserRoles.REGISTERED_USER
                 )
         );
         String link = "http://localhost:8080/api/v1/registration/confirm?token=" + token;
@@ -59,8 +59,8 @@ public class RegistrationService {
         }
 
         confirmationTokenService.setConfirmedAt(token);
-        appUserService.enableAppUser(
-                confirmationToken.getAppUser().getEmail());
+        userService.enableUser(
+                confirmationToken.getUser().getEmail());
         return "confirmed";
     }
 

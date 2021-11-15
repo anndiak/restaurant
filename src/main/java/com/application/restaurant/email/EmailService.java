@@ -1,4 +1,4 @@
-package com.application.restaurant.email_validation.email;
+package com.application.restaurant.email;
 
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
@@ -16,8 +16,7 @@ import java.util.Properties;
 @AllArgsConstructor
 public class EmailService implements EmailSender{
 
-    private final static Logger LOGGER = LoggerFactory
-            .getLogger(EmailService.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(EmailService.class);
 
     private final JavaMailSender mailSender;
 
@@ -25,7 +24,7 @@ public class EmailService implements EmailSender{
     @Async
     public void send(String to, String email) {
         final String username = "ann271101@gmail.com";
-        final String password = "Ann_diak271101";
+        final String password = "*****";
 
         Properties prop = new Properties();
         prop.put("mail.smtp.host", "smtp.gmail.com");

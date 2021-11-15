@@ -1,13 +1,11 @@
-package com.application.restaurant.email_validation.registration.token;
+package com.application.restaurant.registration.token;
 
-import com.application.restaurant.email_validation.appuser.AppUser;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.core.Local;
+
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -33,6 +31,7 @@ public class ConfirmationTokenRepository {
         if (confirmationToken.isPresent()) {
           boolean isValid = confirmationToken.get().getExpiresAt().isAfter(confirmedAt);
           if (isValid) {
+              mongoTemplate.save(confirmationToken.get().updateConfirmedAt(LocalDateTime.now()));
               return 1;
           }
         }

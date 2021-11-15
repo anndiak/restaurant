@@ -1,8 +1,10 @@
-package com.application.restaurant.email_validation.appuser;
+package com.application.restaurant.service;
 
-import com.application.restaurant.email_validation.registration.token.ConfirmationToken;
-import com.application.restaurant.email_validation.registration.token.ConfirmationTokenService;
+import com.application.restaurant.dao.UserRepository;
+import com.application.restaurant.registration.token.ConfirmationToken;
+import com.application.restaurant.registration.token.ConfirmationTokenService;
 
+import com.application.restaurant.model.User;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -15,25 +17,25 @@ import java.util.UUID;
 
 @Service
 @AllArgsConstructor
-public class AppUserService implements UserDetailsService {
+public class UserService implements UserDetailsService {
 
     private final static String USER_NOT_FOUND_MSG =
             "user with email %s not found";
-    private final AppUserRepository appUserRepository;
+    private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final ConfirmationTokenService confirmationTokenService;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return appUserRepository.findByEmail(email)
+        return userRepository.findByEmail(email)
                 .orElseThrow(() ->
                         new UsernameNotFoundException(
-                                String.format(USER_NOT_FOUND_MSG,email)));
+                                String.format(USER_NOT_FOUND_MSG, email)));
     }
 
-    public String sighUpUser(AppUser appUser) {
-       boolean userExists = appUserRepository
-               .findByEmail(appUser.getEmail())
+    public String sighUpUser(User user) {
+       boolean userExists = userRepository
+               .findByEmail(user.getEmail())
                .isPresent();
 
        if (userExists) {
@@ -41,18 +43,18 @@ public class AppUserService implements UserDetailsService {
        }
 
        String encodedPassword = bCryptPasswordEncoder
-               .encode(appUser.getPassword());
+               .encode(user.getPassword());
 
-       appUser.setPassword(encodedPassword);
+       user.setPassword(encodedPassword);
 
-       appUserRepository.save(appUser);
+       userRepository.save(user);
         String token = UUID.randomUUID().toString();
 
         ConfirmationToken confirmationToken = new ConfirmationToken(
                 token,
                 LocalDateTime.now(),
                 LocalDateTime.now().plusMinutes(15),
-                appUser
+                user
         );
 
         confirmationTokenService.saveConfirmationToken(confirmationToken);
@@ -60,8 +62,8 @@ public class AppUserService implements UserDetailsService {
         return token;
     }
 
-    public void enableAppUser(String email) {
-        appUserRepository.findByEmail(email).ifPresent(u -> appUserRepository.update(u.enable()));
+    public void enableUser(String email) {
+        userRepository.findByEmail(email).ifPresent(u -> userRepository.update(u.enable()));
     }
 
 }

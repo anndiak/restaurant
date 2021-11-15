@@ -1,6 +1,6 @@
-package com.application.restaurant.email_validation.registration.token;
+package com.application.restaurant.registration.token;
 
-import com.application.restaurant.email_validation.appuser.AppUser;
+import com.application.restaurant.model.User;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -23,17 +23,21 @@ public class ConfirmationToken {
     @NonNull
     private LocalDateTime expiresAt;
 
-    private AppUser appUser;
+    private User user;
 
     private LocalDateTime confirmedAt;
 
     public ConfirmationToken(String token,
                              LocalDateTime createdAt,
                              LocalDateTime expiresAt,
-                             AppUser appUser) {
+                             User user) {
         this.token = token;
         this.createdAt = createdAt;
         this.expiresAt = expiresAt;
-        this.appUser = appUser;
+        this.user = user;
     }
+     public ConfirmationToken updateConfirmedAt(LocalDateTime confirmedAt){
+        this.confirmedAt = LocalDateTime.now();
+        return this;
+     }
 }

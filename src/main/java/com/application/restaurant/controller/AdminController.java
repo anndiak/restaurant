@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(path = "/v1/admin")
+@RequestMapping(path = "api/v1/admin")
 public class AdminController {
 
     @Autowired
@@ -71,7 +71,7 @@ public class AdminController {
         if(userRepository.findUserById(id) == null){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        if(userRepository.findUserById(id).getRoles() == Roles.ADMIN){
+        if(userRepository.findUserById(id).getUserRoles() == UserRoles.ADMIN){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         userRepository.deleteUser(id);

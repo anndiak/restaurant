@@ -5,6 +5,7 @@ import com.mongodb.client.result.DeleteResult;
 import org.springframework.data.mongodb.core.query.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserRepository{
 
@@ -19,4 +20,10 @@ public interface UserRepository{
     List<User> findAllUsersByFilter(Query query);
 
     List<User> findAllUsers();
+
+    Optional<User> findByEmail(String email);
+
+    void save(User user);
+
+    void update(User user);
 }

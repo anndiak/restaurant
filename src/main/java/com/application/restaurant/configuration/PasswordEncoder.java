@@ -1,4 +1,4 @@
-package com.application.restaurant.email_validation.security;
+package com.application.restaurant.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
