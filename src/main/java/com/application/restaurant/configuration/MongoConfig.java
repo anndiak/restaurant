@@ -11,9 +11,11 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 @Configuration
 public class MongoConfig {
 
+    //todo: time to leave
+
     @Bean
     public MongoClient mongo() {
-        ConnectionString connectionString = new ConnectionString("mongodb://172.21.121.129:27017/");
+        ConnectionString connectionString = new ConnectionString("mongodb://172.25.75.123:27017/");
         MongoClientSettings mongoClientSettings = MongoClientSettings.builder()
                 .applyConnectionString(connectionString)
                 .build();

@@ -17,7 +17,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(path = "/v1/waiter")
+@RequestMapping(path = "api/v1/waiter")
 public class WaiterController {
 
     @Autowired
@@ -38,7 +38,7 @@ public class WaiterController {
 
     @GetMapping("/users/waiters")
     public ResponseEntity<List<User>> getAllWaiters() {
-        List<User> waiters = userRepository.findAllUsersByFilter(Query.query(Criteria.where("roles").is(Roles.WAITER)));
+        List<User> waiters = userRepository.findAllUsersByFilter(Query.query(Criteria.where("roles").is(UserRoles.WAITER)));
         return new ResponseEntity<>(waiters, HttpStatus.OK);
     }
 

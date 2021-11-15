@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class UserRepositoryImpl implements UserRepository {
@@ -47,4 +48,16 @@ public class UserRepositoryImpl implements UserRepository {
     public List<User> findAllUsers() {
         return mt.findAll(User.class);
     }
+
+    @Override
+    public Optional<User> findByEmail(String email) {
+        Query query = Query.query(Criteria.where("email").is(email));
+        return Optional.ofNullable(mt.findOne(query,User.class));
+    }
+
+    @Override
+    public void save(User user) { mt.insert(user); }
+
+    @Override
+    public void update(User user) { mt.save(user); }
 }
