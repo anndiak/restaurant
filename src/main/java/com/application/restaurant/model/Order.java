@@ -29,5 +29,7 @@ public class Order {
 
     private String waiterId;
 
+    private double totalPrice = 0.0;
+
 }
 

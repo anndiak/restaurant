@@ -25,6 +25,6 @@ public class MongoConfig {
 
     @Bean
     public MongoTemplate mongoTemplate() {
-        return new MongoTemplate(mongo(), "restaurant");
+        return new MongoTemplate(mongo(), "restaurant_test");
     }
 }

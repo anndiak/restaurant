@@ -7,7 +7,6 @@ import com.application.restaurant.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -35,7 +34,7 @@ public class AdminController {
     @PostMapping("/users/add")
     public ResponseEntity<User> addUserToSystem(@Valid @RequestBody User user) {
         user.setId(UUID.randomUUID().toString());
-        userRepository.addUser(user);
+        userRepository.create(user);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 

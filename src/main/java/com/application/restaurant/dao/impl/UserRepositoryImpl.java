@@ -2,7 +2,6 @@ package com.application.restaurant.dao.impl;
 
 import com.application.restaurant.dao.UserRepository;
 import com.application.restaurant.model.User;
-import com.mongodb.client.result.DeleteResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -18,14 +17,16 @@ public class UserRepositoryImpl implements UserRepository {
     @Autowired
     private MongoTemplate mt;
 
-    @Override
-    public User addUser(User user) {
-       return mt.insert(user);
-    }
 
     @Override
-    public DeleteResult deleteUser(String userId) {
-        return mt.remove(userId);
+    public User create(User user) { return mt.insert(user); }
+
+    @Override
+    public void update(User user) { mt.save(user); }
+
+    @Override
+    public void deleteUser(String userId) {
+        mt.remove(findUserById(userId));
     }
 
     @Override
@@ -54,10 +55,4 @@ public class UserRepositoryImpl implements UserRepository {
         Query query = Query.query(Criteria.where("email").is(email));
         return Optional.ofNullable(mt.findOne(query,User.class));
     }
-
-    @Override
-    public void save(User user) { mt.insert(user); }
-
-    @Override
-    public void update(User user) { mt.save(user); }
 }

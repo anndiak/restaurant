@@ -15,4 +15,6 @@ public class Request {
     private String userId;
 
     private  Order order;
+
+    private RequestStatus requestStatus;
 }

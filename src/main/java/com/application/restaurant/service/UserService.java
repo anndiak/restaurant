@@ -47,7 +47,7 @@ public class UserService implements UserDetailsService {
 
        user.setPassword(encodedPassword);
 
-       userRepository.save(user);
+       userRepository.create(user);
         String token = UUID.randomUUID().toString();
 
         ConfirmationToken confirmationToken = new ConfirmationToken(
