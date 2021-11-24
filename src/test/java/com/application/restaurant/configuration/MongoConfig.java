@@ -1,5 +1,7 @@
 package com.application.restaurant.configuration;
 
+import com.application.restaurant.dao.UserRepository;
+import com.application.restaurant.dao.impl.UserRepositoryImpl;
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
@@ -21,6 +23,11 @@ public class MongoConfig {
                 .build();
 
         return MongoClients.create(mongoClientSettings);
+    }
+
+    @Bean
+    public UserRepository userRepository() {
+        return new UserRepositoryImpl();
     }
 
     @Bean

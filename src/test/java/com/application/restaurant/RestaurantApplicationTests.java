@@ -1,5 +1,6 @@
 package com.application.restaurant;
 
+import com.application.restaurant.controller.AdminController;
 import com.application.restaurant.dao.UserRepository;
 import com.application.restaurant.model.User;
 import com.application.restaurant.model.UserRoles;
@@ -98,4 +99,6 @@ class RestaurantApplicationTests {
         userRepository.create(user);
         assertEquals(userRepository.findUserById(user.getId()), user);
     }
+
+
 }

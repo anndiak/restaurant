@@ -24,7 +24,6 @@ public class Order {
     private List<Meal> mealList;
 
     @NotNull
-    @NotEmpty
     private OrderStatus status;
 
     private String waiterId;

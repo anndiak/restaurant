@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(path = "api/v1/admin")
+@RequestMapping(path = "/api/v1/admin")
 public class AdminController {
 
     @Autowired
@@ -36,18 +36,6 @@ public class AdminController {
         user.setId(UUID.randomUUID().toString());
         userRepository.create(user);
         return new ResponseEntity<>(user, HttpStatus.OK);
-    }
-
-    @PostMapping("/users/{id}/delete")
-    public ResponseEntity<User> deleteUserFromSystem(@PathVariable("id") String id) {
-        if(id == null ){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        if(userRepository.findUserById(id) == null){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        userRepository.deleteUser(id);
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping(path = "users/{id}")
@@ -94,7 +82,7 @@ public class AdminController {
         return new ResponseEntity<>(request,HttpStatus.OK);
     }
 
-    @PostMapping("/requests/{id}/accept")
+    @PutMapping("/requests/{id}/accept")
     public ResponseEntity<HttpStatus> acceptRequest(@PathVariable("id") String id) {
         if(id == null ){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -143,14 +131,11 @@ public class AdminController {
         return new ResponseEntity<>(order, HttpStatus.OK);
     }
 
-    @PostMapping("/orders/{id}/{status}")
+    @PutMapping("/orders/{id}/{status}")
     public ResponseEntity<Order> changeStatusOfOrder(@PathVariable("id") String id, @PathVariable("status") String orderStatus) {
         if(id == null || orderStatus == null || orderStatus.equals("") ||
                 (!orderStatus.equalsIgnoreCase(OrderStatus.IN_PROGRESS.name()) && !orderStatus.equalsIgnoreCase(OrderStatus.DONE.name()))){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        if(requestRepository.getRequestById(id) == null){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         Order order;
         if (orderStatus.equalsIgnoreCase(OrderStatus.IN_PROGRESS.name())) {
