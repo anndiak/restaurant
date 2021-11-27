@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1")
-public class UnregisteredUserController {
+public class HomePageController {
 
     @RequestMapping("/homepage")
     public String homePage() {
