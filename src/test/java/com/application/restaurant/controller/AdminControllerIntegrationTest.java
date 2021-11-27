@@ -45,7 +45,7 @@ public class AdminControllerIntegrationTest {
     public void getAllUsersTest() throws Exception
     {
         User user = new User("Ivan", "Antonych", "iv.antonych@gmail.com",
-                "1234567", UserRoles.UNREGISTERED_USER);
+                "1234567", UserRoles.ROLE_REGISTERED_USER);
         user.setId("1");
         mongoTemplate.save(user);
         mvc.perform( MockMvcRequestBuilders
@@ -74,7 +74,7 @@ public class AdminControllerIntegrationTest {
     public void getUserTest() throws Exception
     {
         User user = new User("Ivan", "Antonych", "iv.antonych@gmail.com",
-                "1234567", UserRoles.UNREGISTERED_USER);
+                "1234567", UserRoles.ROLE_REGISTERED_USER);
         user.setId("1");
         mongoTemplate.save(user);
         mvc.perform( MockMvcRequestBuilders
@@ -99,7 +99,7 @@ public class AdminControllerIntegrationTest {
     public void deleteUserFromSystemTest() throws Exception
     {
         User user = new User("Ivan", "Antonych", "iv.antonych@gmail.com",
-                "1234567", UserRoles.UNREGISTERED_USER);
+                "1234567", UserRoles.ROLE_REGISTERED_USER);
         user.setId("1");
         mongoTemplate.save(user);
         mvc.perform( MockMvcRequestBuilders

@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.mongodb.core.query.Query;
 
@@ -29,6 +31,11 @@ public class WaiterController {
     @Autowired
     private OrderRepository orderRepository;
 
+    public User getAuthenticatedUser(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return (User)auth.getPrincipal();
+    }
+
     @PostMapping("/orders/add")
     public ResponseEntity<Order> addOrderToSystem(@Valid @RequestBody Order order) {
         order.setId(UUID.randomUUID().toString());
@@ -38,7 +45,7 @@ public class WaiterController {
 
     @GetMapping("/users/waiters")
     public ResponseEntity<List<User>> getAllWaiters() {
-        List<User> waiters = userRepository.findAllUsersByFilter(Query.query(Criteria.where("roles").is(UserRoles.WAITER)));
+        List<User> waiters = userRepository.findAllUsersByFilter(Query.query(Criteria.where("roles").is(UserRoles.ROLE_WAITER)));
         return new ResponseEntity<>(waiters, HttpStatus.OK);
     }
 

@@ -24,7 +24,7 @@ public class EmailService implements EmailSender{
     @Async
     public void send(String to, String email) {
         final String username = "ann271101@gmail.com";
-        final String password = "****";
+        final String password = "Ann_diak271101";
 
         Properties prop = new Properties();
         prop.put("mail.smtp.host", "smtp.gmail.com");

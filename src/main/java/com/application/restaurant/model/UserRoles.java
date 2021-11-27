@@ -1,3 +1,3 @@
 package com.application.restaurant.model;
 
-public enum UserRoles {ADMIN, WAITER, REGISTERED_USER, UNREGISTERED_USER}
+public enum UserRoles {ROLE_ADMIN, ROLE_WAITER, ROLE_REGISTERED_USER}

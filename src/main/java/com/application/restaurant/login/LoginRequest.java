@@ -1,4 +1,4 @@
-package com.application.restaurant.registration;
+package com.application.restaurant.login;
 
 import lombok.*;
 
@@ -7,9 +7,7 @@ import lombok.*;
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-public class RegistrationRequest {
-    private String firstName;
-    private String lastName;
+public class LoginRequest {
     private String email;
     private String password;
 }

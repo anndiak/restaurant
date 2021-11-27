@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -25,6 +26,11 @@ public class AdminController {
 
     @Autowired
     private OrderRepository orderRepository;
+
+    @RequestMapping("/homepage")
+    public ModelAndView homePage() {
+        return new ModelAndView("admindashboard");
+    }
 
     @GetMapping("/users")
     public List<User> getAllUsers() {
@@ -58,7 +64,7 @@ public class AdminController {
         if(userRepository.findUserById(id) == null){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        if(userRepository.findUserById(id).getUserRoles() == UserRoles.ADMIN){
+        if(userRepository.findUserById(id).getUserRoles() == UserRoles.ROLE_ADMIN){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         userRepository.deleteUser(id);

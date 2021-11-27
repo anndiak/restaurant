@@ -6,20 +6,22 @@ import com.application.restaurant.dao.UserRepository;
 import com.application.restaurant.model.Order;
 import com.application.restaurant.model.Request;
 import com.application.restaurant.model.RequestStatus;
+import com.application.restaurant.model.User;
 import com.application.restaurant.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.security.RolesAllowed;
 import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(path = "api/v1/registered_user/{id}")
+@RequestMapping(path = "api/v1/registered_user")
 public class RegisteredUserController {
 
     @Autowired
@@ -34,14 +36,20 @@ public class RegisteredUserController {
     @Autowired
     private OrderService orderService;
 
+
+    public User getAuthenticatedUser(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return (User)auth.getPrincipal();
+    }
+
     @GetMapping("/orders")
-    public ResponseEntity<List<Order>> getAllOrders(@PathVariable("id") String id) {
-        Query query = Query.query(Criteria.where("id").is(id));
+    public ResponseEntity<List<Order>> getAllOrders() {
+        Query query = Query.query(Criteria.where("id").is(getAuthenticatedUser().getId()));
         return new ResponseEntity<>(orderRepository.getOrdersByFilter(query), HttpStatus.OK);
     }
 
     @GetMapping("/orders/{order_id}")
-    public ResponseEntity<Order> getOrder(@PathVariable("order_id") String order_id, @PathVariable("id") String id) {
+    public ResponseEntity<Order> getOrder(@PathVariable("order_id") String order_id) {
         if(order_id == null ){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -53,11 +61,11 @@ public class RegisteredUserController {
     }
 
     @PostMapping("/request/new")
-    public ResponseEntity<Request> makeOrderRequest(@RequestBody Order order, @PathVariable("id") String id) {
+    public ResponseEntity<Request> makeOrderRequest(@RequestBody Order order) {
         order.setTotalPrice(orderService.countOrderPrice(order.getMealList()));
         Request request = new Request();
         request.setId(UUID.randomUUID().toString());
-        request.setUserId(id);
+        request.setUserId(getAuthenticatedUser().getId());
         request.setOrder(order);
         request.setRequestStatus(RequestStatus.IN_PROGRESS);
         requestRepository.sentRequest(request);
@@ -65,7 +73,7 @@ public class RegisteredUserController {
     }
 
     @DeleteMapping("/requests/{request_id}/cancel")
-    public ResponseEntity<Request> cancelOrderRequest(@PathVariable("request_id") String request_id, @PathVariable("id") String id){
+    public ResponseEntity<Request> cancelOrderRequest(@PathVariable("request_id") String request_id){
         if(request_id == null ){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
