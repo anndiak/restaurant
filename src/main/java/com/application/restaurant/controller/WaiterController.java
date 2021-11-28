@@ -12,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -34,6 +35,11 @@ public class WaiterController {
     public User getAuthenticatedUser(){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         return (User)auth.getPrincipal();
+    }
+
+    @RequestMapping("/homepage")
+    public ModelAndView homePage() {
+        return new ModelAndView("dashboards/waiter");
     }
 
     @PostMapping("/orders/add")

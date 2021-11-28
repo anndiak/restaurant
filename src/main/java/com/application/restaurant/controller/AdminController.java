@@ -29,7 +29,7 @@ public class AdminController {
 
     @RequestMapping("/homepage")
     public ModelAndView homePage() {
-        return new ModelAndView("admindashboard");
+        return new ModelAndView("dashboards/admin");
     }
 
     @GetMapping("/users")

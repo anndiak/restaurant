@@ -1,9 +1,5 @@
 package com.application.restaurant.login;
 
-import com.application.restaurant.model.User;
-import com.application.restaurant.registration.RegistrationRequest;
-import lombok.AllArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;

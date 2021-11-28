@@ -25,8 +25,6 @@ public class ConfirmationToken {
 
     private User user;
 
-    private LocalDateTime confirmedAt;
-
     public ConfirmationToken(String token,
                              LocalDateTime createdAt,
                              LocalDateTime expiresAt,
@@ -36,8 +34,4 @@ public class ConfirmationToken {
         this.expiresAt = expiresAt;
         this.user = user;
     }
-     public ConfirmationToken updateConfirmedAt(LocalDateTime confirmedAt){
-        this.confirmedAt = LocalDateTime.now();
-        return this;
-     }
 }

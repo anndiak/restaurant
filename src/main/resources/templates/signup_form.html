@@ -19,6 +19,7 @@
 				<label class="col-4 col-form-label">E-mail: </label>
 				<div class="col-8">
 					<input type="email" th:field="*{email}" class="form-control" required />
+					<p th:text="${message}">Validation error</p>
 				</div>
 			</div>
 

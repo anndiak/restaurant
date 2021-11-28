@@ -3,7 +3,7 @@ package com.application.restaurant.registration.token;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -16,12 +16,10 @@ public class ConfirmationTokenService {
        confirmationTokenRepository.save(token);
    }
 
-    public Optional<ConfirmationToken> getToken(String token) {
+   public Optional<ConfirmationToken> getToken(String token) {
         return confirmationTokenRepository.findByToken(token);
     }
+    public void deleteConfirmationToken(ConfirmationToken token) { confirmationTokenRepository.delete(token); }
 
-    public int setConfirmedAt(String token) {
-        return confirmationTokenRepository.updateConfirmedAt(
-                token, LocalDateTime.now());
-    }
+    public List<ConfirmationToken> getAllConfirmationTokens() { return confirmationTokenRepository.findAll(); }
 }

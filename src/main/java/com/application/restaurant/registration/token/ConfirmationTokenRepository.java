@@ -7,7 +7,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -25,16 +25,7 @@ public class ConfirmationTokenRepository {
         mongoTemplate.insert(confirmationToken);
     }
 
-    public int updateConfirmedAt (String token,
-                                  LocalDateTime confirmedAt) {
-        Optional<ConfirmationToken> confirmationToken = findByToken(token);
-        if (confirmationToken.isPresent()) {
-          boolean isValid = confirmationToken.get().getExpiresAt().isAfter(confirmedAt);
-          if (isValid) {
-              mongoTemplate.save(confirmationToken.get().updateConfirmedAt(LocalDateTime.now()));
-              return 1;
-          }
-        }
-        return 0;
-    }
+    public void delete(ConfirmationToken confirmationToken){ mongoTemplate.remove(confirmationToken);}
+
+    public List<ConfirmationToken> findAll(){ return mongoTemplate.findAll(ConfirmationToken.class);}
 }

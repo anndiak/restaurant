@@ -14,12 +14,17 @@ public class RegistrationController {
 
 
     @PostMapping("/process_register")
-    public String processRegister(RegistrationRequest request) {
-        registrationService.register(request);
-        return "register_success";
+    public String processRegister(RegistrationRequest request, Model model) {
+        try {
+            registrationService.register(request);
+            return "register_success";
+        } catch (Exception ex) {
+            model.addAttribute("message", ex.getMessage());
+            return "signup_form";
+        }
     }
 
-    @GetMapping("/register")
+    @GetMapping("/registration")
     public String showRegistrationForm(Model model) {
         model.addAttribute("registrationRequest", new RegistrationRequest());
         return "signup_form";
