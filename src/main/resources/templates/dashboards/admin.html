@@ -9,6 +9,7 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script type="text/javascript">
     $( document ).ready(function() {
+
       $("#loadUsersBtn").click(() => {
         $("#loadUsersBtn").html("<span class=\"spinner-border spinner-border-sm\" role=\"status\" aria-hidden=\"true\"></span>Loading...")
         setTimeout(() => {
@@ -17,17 +18,29 @@
             let rows = "";
             let rowNumber = 1;
             data.forEach(function (row) {
-              rows += "<tr>";
-              rows += "<th scope=\"row\">" + (rowNumber++) + "</th>";
-              rows += "<td>" + row.firstName + "</td>";
-              rows += "<td>" + row.lastName + "</td>";
-              rows += "<td>" + row.email + "</td>";
-              rows += "</tr>"
+              rows += `<tr>
+                        <th scope="row">${rowNumber++}</th>
+                        <td>${row.firstName}</td>
+                        <td>${row.lastName}</td>
+                        <td>${row.email}</td>
+                        <td><button id='deleteUserBtn' type='button' class='btn btn-danger user-remove-btn' value="${row.id}">Delete</button></td>
+                      </tr>`;
             });
             $("#usersList tbody").html(rows);
             $("#loadUsersBtn").html("Load users");
+
+            $(".user-remove-btn").click((event) =>{
+              let id = $(event.target).attr("value");
+              $.ajax({
+                type:"DELETE",
+                url:"http://localhost:8080/api/v1/admin/users/" + id,
+                success: function(data){
+                  $("#loadUsersBtn").click();
+                }
+              });
+            });
           });
-        }, 3000);
+        }, 1000);
       })
     });
   </script>
@@ -47,6 +60,7 @@
           <th scope="col">First</th>
           <th scope="col">Last</th>
           <th scope="col">Email</th>
+          <th scope="col">Delete</th>
         </tr>
       </thead>
       <tbody>
