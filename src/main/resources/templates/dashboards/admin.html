@@ -23,11 +23,14 @@
             data.forEach(function (row) {
               gbmap.set(row.id, row);
               current_user_id = row.id;
+              let enabled_opt = "Enabled";
+              if (row.enabled === false) {enabled_opt = "Disabled"}
               rows += `<tr>
                         <th scope="row">${rowNumber++}</th>
                         <td>${row.firstName}</td>
                         <td>${row.lastName}</td>
                         <td>${row.email}</td>
+                        <td>${enabled_opt}</td>
                         <td><button id='deleteUserBtn' type='button' class='btn btn-danger user-remove-btn' value="${row.id}">Delete</button></td>
                         <td><button type="button" class="btn btn-primary user-edit-btn" data-bs-toggle="modal" data-bs-target="#save_Modal" value="${row.id}">Edit</button></td>
                       </tr>`;
@@ -54,14 +57,23 @@
               $("#inputEmail").val(user.email);
               $("#inputFirstName").val(user.firstName);
               $("#inputLastName").val(user.lastName);
+              if (user.enabled === true) {
+                $("#inputStateEnabling").val("enabled");
+              } else {
+                $("#inputStateEnabling").val("disabled");
+              }
             });
 
             $("#btn_save").click(function() {
+
+              let enabled_opt = true;
+              if ($("#inputStateEnabling").val() === "disabled") {enabled_opt = false}
 
               let jsonVar = {
                 email: $("#inputEmail").val(),
                 firstName: $("#inputFirstName").val(),
                 lastName: $("#inputLastName").val(),
+                enabled: enabled_opt
               };
 
               $.ajax({
@@ -100,6 +112,7 @@
           <th scope="col">First</th>
           <th scope="col">Last</th>
           <th scope="col">Email</th>
+          <th scope="col">Enabling</th>
           <th scope="col">Delete</th>
           <th scope="col">Edit</th>
         </tr>
@@ -121,6 +134,13 @@
                   <label for="inputEmail">Email</label>
                   <input type="email" class="form-control" id="inputEmail">
                 </div>
+                  <div class="col-md-6">
+                    <label for="inputStateEnabling" class="form-label">Enabling</label>
+                    <select id="inputStateEnabling" class="form-select">
+                      <option value="enabled">Enable</option>
+                      <option value="disabled">Disable</option>
+                    </select>
+                  </div>
               </div>
               <div class="form-row">
                 <div class="form-group col-md-6">

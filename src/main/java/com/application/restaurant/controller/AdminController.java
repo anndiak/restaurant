@@ -170,6 +170,7 @@ public class AdminController {
         user.setFirstName(newUser.getFirstName());
         user.setLastName(newUser.getLastName());
         user.setEmail(newUser.getEmail());
+        user.setEnabled(newUser.getEnabled());
         return user;
     }
 
