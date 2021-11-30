@@ -56,6 +56,18 @@ public class AdminController {
         return new ResponseEntity<>(user,HttpStatus.OK);
     }
 
+    @PutMapping(path = "users/{id}")
+    public ResponseEntity<User> updateUser(@PathVariable("id") String id, @RequestBody User user) {
+        if(id == null || user == null){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        if(userRepository.findUserById(id) == null){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        User updatedUser = updateUserFields(id, user);
+        return new ResponseEntity<>(userRepository.update(updatedUser), HttpStatus.OK);
+    }
+
     @DeleteMapping(path = "users/{id}")
     public ResponseEntity<User> deleteUser(@PathVariable("id") String id) {
         if(id == null){
@@ -152,6 +164,15 @@ public class AdminController {
 
         return new ResponseEntity<>(order,HttpStatus.OK);
     }
+
+    private User updateUserFields(String id, User newUser){
+        User user = userRepository.findUserById(id);
+        user.setFirstName(newUser.getFirstName());
+        user.setLastName(newUser.getLastName());
+        user.setEmail(newUser.getEmail());
+        return user;
+    }
+
 
 
 }

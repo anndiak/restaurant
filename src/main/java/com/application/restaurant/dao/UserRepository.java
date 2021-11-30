@@ -22,5 +22,5 @@ public interface UserRepository{
 
     User create(User user);
 
-    void update(User user);
+    User update(User user);
 }

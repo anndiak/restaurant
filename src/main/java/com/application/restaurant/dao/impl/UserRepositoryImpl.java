@@ -22,7 +22,7 @@ public class UserRepositoryImpl implements UserRepository {
     public User create(User user) { return mt.insert(user); }
 
     @Override
-    public void update(User user) { mt.save(user); }
+    public User update(User user) { return mt.save(user); }
 
     @Override
     public void deleteUser(String userId) {

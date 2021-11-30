@@ -9,6 +9,8 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script type="text/javascript">
     $( document ).ready(function() {
+      var gbmap;
+      var current_user_id;
 
       $("#loadUsersBtn").click(() => {
         $("#loadUsersBtn").html("<span class=\"spinner-border spinner-border-sm\" role=\"status\" aria-hidden=\"true\"></span>Loading...")
@@ -17,13 +19,17 @@
             console.log(data);
             let rows = "";
             let rowNumber = 1;
+            gbmap = new Map();
             data.forEach(function (row) {
+              gbmap.set(row.id, row);
+              current_user_id = row.id;
               rows += `<tr>
                         <th scope="row">${rowNumber++}</th>
                         <td>${row.firstName}</td>
                         <td>${row.lastName}</td>
                         <td>${row.email}</td>
                         <td><button id='deleteUserBtn' type='button' class='btn btn-danger user-remove-btn' value="${row.id}">Delete</button></td>
+                        <td><button type="button" class="btn btn-primary user-edit-btn" data-bs-toggle="modal" data-bs-target="#save_Modal" value="${row.id}">Edit</button></td>
                       </tr>`;
             });
             $("#usersList tbody").html(rows);
@@ -39,8 +45,42 @@
                 }
               });
             });
+
+            $(".user-edit-btn").click((event) =>{
+              let id = $(event.target).attr("value");
+              current_user_id = id;
+              let user = gbmap.get(id);
+
+              $("#inputEmail").val(user.email);
+              $("#inputFirstName").val(user.firstName);
+              $("#inputLastName").val(user.lastName);
+            });
+
+            $("#btn_save").click(function() {
+
+              let jsonVar = {
+                email: $("#inputEmail").val(),
+                firstName: $("#inputFirstName").val(),
+                lastName: $("#inputLastName").val(),
+              };
+
+              $.ajax({
+                type: "PUT",
+                data: JSON.stringify(jsonVar),
+                contentType: "application/json",
+                url:"http://localhost:8080/api/v1/admin/users/" + current_user_id,
+                success: function (data) {
+                  jsonVar = null;
+                  $("#inputEmail").val(null);
+                  $("#inputFirstName").val(null);
+                  $("#inputLastName").val(null);
+                  $("#btn_close").click()
+                  $("#loadUsersBtn").click();
+                }
+              });
+            });
           });
-        }, 1000);
+        }, 2000);
       })
     });
   </script>
@@ -61,10 +101,45 @@
           <th scope="col">Last</th>
           <th scope="col">Email</th>
           <th scope="col">Delete</th>
+          <th scope="col">Edit</th>
         </tr>
       </thead>
       <tbody>
       </tbody>
     </table>
+    <div class="modal" tabindex="-1" id="save_Modal">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Modal title</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="editForm">
+              <div class="form-row">
+                <div class="form-group col-md-6">
+                  <label for="inputEmail">Email</label>
+                  <input type="email" class="form-control" id="inputEmail">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group col-md-6">
+                  <label for="inputFirstName">FirstName</label>
+                  <input type="text" class="form-control" id="inputFirstName">
+                </div>
+                <div class="form-group col-md-6">
+                  <label for="inputLastName">LastName</label>
+                  <input type="text" class="form-control" id="inputLastName">
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="btn_close">Close</button>
+            <button type="button" class="btn btn-primary" id="btn_save">Save changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </body>
 </html>
