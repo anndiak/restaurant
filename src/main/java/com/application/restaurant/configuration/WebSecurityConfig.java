@@ -33,19 +33,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers("/registration/**").permitAll()
                     .antMatchers("/confirm/**").permitAll()
                     .antMatchers("/process_register").permitAll()
-                    .antMatchers("/api/v*/homepage/**").permitAll()
+                    .antMatchers("/homepage/**").permitAll()
                 .antMatchers("/api/v*/admin/**").permitAll()
+                .antMatchers("/api/v*/waiter/**").permitAll()
 //                    .antMatchers("/api/v*/admin/**").access("hasRole('ROLE_ADMIN')")
 //                    .antMatchers("/api/v*/registered_user/**").access("hasRole('ROLE_REGISTERED_USER')")
 //                    .antMatchers("/api/v*/waiter/**").access("hasRole('ROLE_WAITER')")
                 .anyRequest()
                 .authenticated()
-               // .and().formLogin().loginPage("/login")
                 .and().formLogin()
                 .successHandler(successHandler)
                 .permitAll()
                 .and().logout()
-                .logoutUrl("/homepage");
+                .logoutUrl("/api/v*/**/logout");
     }
 
     @Override

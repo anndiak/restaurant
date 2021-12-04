@@ -7,16 +7,19 @@ import com.application.restaurant.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping(path = "/api/v1/admin")
 public class AdminController {
+
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
     private UserRepository userRepository;
@@ -39,7 +42,7 @@ public class AdminController {
 
     @PostMapping("/users/add")
     public ResponseEntity<User> addUserToSystem(@Valid @RequestBody User user) {
-        user.setId(UUID.randomUUID().toString());
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         userRepository.create(user);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
@@ -144,7 +147,6 @@ public class AdminController {
 
     @PostMapping("/orders/add")
     public ResponseEntity<Order> addOrderToSystem(@Valid @RequestBody Order order) {
-        order.setId(UUID.randomUUID().toString());
         orderRepository.addOrder(order);
         return new ResponseEntity<>(order, HttpStatus.OK);
     }

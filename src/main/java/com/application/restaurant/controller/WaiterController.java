@@ -17,7 +17,6 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @RestController
 @RequestMapping(path = "api/v1/waiter")
@@ -44,7 +43,6 @@ public class WaiterController {
 
     @PostMapping("/orders/add")
     public ResponseEntity<Order> addOrderToSystem(@Valid @RequestBody Order order) {
-        order.setId(UUID.randomUUID().toString());
         orderRepository.addOrder(order);
         return new ResponseEntity<>(order, HttpStatus.OK);
     }
@@ -98,7 +96,7 @@ public class WaiterController {
         if(requestRepository.getRequestById(id) == null){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        final Request request = requestRepository.getRequestById(id);;
+        final Request request = requestRepository.getRequestById(id);
         return new ResponseEntity<>(request,HttpStatus.OK);
     }
 }
