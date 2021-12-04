@@ -44,7 +44,7 @@ class RestaurantApplicationTests {
     @Test()
     void findUserByEmailInDbTest() {
         User user = new User("Ivan", "Antonych", "iv.antonych@gmail.com",
-                "1234567", UserRoles.ROLE_REGISTERED_USER);
+                "0687734576","1234567", UserRoles.ROLE_REGISTERED_USER);
         user.setId(UUID.randomUUID().toString());
         userRepository.create(user);
         User foundedUser = userRepository.findByEmail(user.getEmail()).get();
@@ -54,7 +54,7 @@ class RestaurantApplicationTests {
     @Test
     void updateUserFieldInDbTest(){
         User user = new User("Ivan", "Antonych", "iv.antonych@gmail.com",
-                "1234567", UserRoles.ROLE_REGISTERED_USER);
+                "0687734576", "1234567", UserRoles.ROLE_REGISTERED_USER);
         userRepository.create(user);
         user.setPassword("2345");
         userRepository.update(user);
@@ -65,7 +65,7 @@ class RestaurantApplicationTests {
     @Test
     void deleteUserFromDbTest(){
         User user = new User("Ivan", "Antonych", "iv.antonych@gmail.com",
-                "1234567", UserRoles.ROLE_REGISTERED_USER);
+                "0687734576","1234567", UserRoles.ROLE_REGISTERED_USER);
         user.setId(UUID.randomUUID().toString());
         assertNotNull(userRepository.create(user));
         userRepository.deleteUser(user.getId());
@@ -75,11 +75,11 @@ class RestaurantApplicationTests {
     @Test
     void findAllUsersTest(){
         User user1 = new User("Ivan", "Antonych", "iv.antonych@gmail.com",
-                "1234567", UserRoles.ROLE_REGISTERED_USER);
+                "0687731234","1234567", UserRoles.ROLE_REGISTERED_USER);
         User user2 = new User("Taras", "Romanchuk", "taras.roman@gmail.com",
-                "12sdf567", UserRoles.ROLE_REGISTERED_USER);
+                "0687732345","12sdf567", UserRoles.ROLE_REGISTERED_USER);
         User user3 = new User("Volodymir", "Stepaniuk", "vova.step@gmail.com",
-                "646yhc567", UserRoles.ROLE_REGISTERED_USER);
+                "0687734576", "646yhc567", UserRoles.ROLE_REGISTERED_USER);
         userRepository.create(user1);
         userRepository.create(user2);
         userRepository.create(user3);
@@ -89,7 +89,7 @@ class RestaurantApplicationTests {
     @Test()
     void findUserByIdTest() {
         User user = new User("Ivan", "Antonych", "iv.antonych@gmail.com",
-                "1234567", UserRoles.ROLE_REGISTERED_USER);
+                "0687734576","1234567", UserRoles.ROLE_REGISTERED_USER);
         user.setId(UUID.randomUUID().toString());
         userRepository.create(user);
         assertEquals(userRepository.findUserById(user.getId()), user);

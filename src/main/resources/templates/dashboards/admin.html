@@ -39,6 +39,7 @@
                         <td>${row.firstName}</td>
                         <td>${row.lastName}</td>
                         <td>${row.email}</td>
+                        <td>${row.phoneNumber}</td>
                         <td>${role_opt}</td>
                         <td>${enabled_opt}</td>
                         <td><button id='deleteUserBtn' type='button' class='btn btn-danger user-remove-btn' value="${row.id}">Delete</button></td>
@@ -73,6 +74,7 @@
               $("#inputEmail").val(user.email);
               $("#inputFirstName").val(user.firstName);
               $("#inputLastName").val(user.lastName);
+              $("#inputPhone").val(user.phoneNumber);
               if (user.enabled === true) {
                 $("#inputStateEnabling").val("enabled");
               } else {
@@ -89,6 +91,7 @@
                 email: $("#inputEmail").val(),
                 firstName: $("#inputFirstName").val(),
                 lastName: $("#inputLastName").val(),
+                phoneNumber: $("#inputPhone").val(),
                 enabled: enabled_opt
               };
 
@@ -102,6 +105,7 @@
                   $("#inputEmail").val(null);
                   $("#inputFirstName").val(null);
                   $("#inputLastName").val(null);
+                  $("#inputPhone").val(null);
                   $("#btn_close").click()
                   $("#loadUsersBtn").click();
                 }
@@ -125,6 +129,7 @@
           email: $("#inputEmail").val(),
           firstName: $("#inputFirstName").val(),
           lastName: $("#inputLastName").val(),
+          phoneNumber: $("#inputPhone").val(),
           password: $("#inputPasswordField").val(),
           enabled: enabled_opt,
           userRoles: $("#inputStateRolesField").val()
@@ -140,6 +145,7 @@
             $("#inputEmail").val(null);
             $("#inputFirstName").val(null);
             $("#inputLastName").val(null);
+            $("#inputPhone").val(null);
             $("#inputPasswordField").val(null),
             $("#inputStateRolesField").val(null)
             $("#btn_close").click()
@@ -148,84 +154,219 @@
         });
       });
     });
+
+
+    $( document ).ready(function() {
+      $("#loadOrdersBtn").click(() => {
+        $("#loadOrdersBtn").html("<span class=\"spinner-border spinner-border-sm\" role=\"status\" aria-hidden=\"true\"></span>Loading...")
+        setTimeout(() => {
+          $.get("/api/v1/admin/orders", function (data) {
+            console.log(data);
+            let rows = "";
+            let rowNumber = 1;
+            gbmap = new Map();
+            data.forEach(function (row) {
+              gbmap.set(row.id, row);
+              current_user_id = row.id;
+              console.log(row)
+
+              rows += `<tr>
+                        <th scope="row">${rowNumber++}</th>
+                        <td>${row.firstName}</td>
+                        <td>${row.lastName}</td>
+                        <td>${row.email}</td>
+                        <td>${role_opt}</td>
+                        <td>${enabled_opt}</td>
+                        <td><button id='deleteUserBtn' type='button' class='btn btn-danger user-remove-btn' value="${row.id}">Delete</button></td>
+                        <td><button type="button" class="btn btn-primary user-edit-btn" data-bs-toggle="modal" data-bs-target="#save_Modal" value="${row.id}">Edit</button></td>
+                      </tr>`;
+            });
+            $("#usersList tbody").html(rows);
+            $("#loadUsersBtn").html("Load users");
+
+            $(".user-remove-btn").click((event) =>{
+              let id = $(event.target).attr("value");
+              $.ajax({
+                type:"DELETE",
+                url:"http://localhost:8080/api/v1/admin/users/" + id,
+                success: function(data){
+                  $("#loadUsersBtn").click();
+                }
+              });
+            });
+
+            $(".user-edit-btn").click((event) =>{
+
+              $("#inputPassword").hide();
+              $("#inputStateRoles").hide();
+              $("#btn_add").hide();
+              $("#btn_save").show();
+
+              let id = $(event.target).attr("value");
+              current_user_id = id;
+              let user = gbmap.get(id);
+
+              $("#inputEmail").val(user.email);
+              $("#inputFirstName").val(user.firstName);
+              $("#inputLastName").val(user.lastName);
+              $("#inputPhone").val(user.phoneNumber);
+              if (user.enabled === true) {
+                $("#inputStateEnabling").val("enabled");
+              } else {
+                $("#inputStateEnabling").val("disabled");
+              }
+            });
+
+            $("#btn_save").click(function() {
+
+              let enabled_opt = true;
+              if ($("#inputStateEnabling").val() === "disabled") {enabled_opt = false}
+
+              let jsonVar = {
+                email: $("#inputEmail").val(),
+                firstName: $("#inputFirstName").val(),
+                lastName: $("#inputLastName").val(),
+                phoneNumber: $("#inputPhone").val(),
+                enabled: enabled_opt
+              };
+
+              $.ajax({
+                type: "PUT",
+                data: JSON.stringify(jsonVar),
+                contentType: "application/json",
+                url:"http://localhost:8080/api/v1/admin/users/" + current_user_id,
+                success: function (data) {
+                  jsonVar = null;
+                  $("#inputEmail").val(null);
+                  $("#inputFirstName").val(null);
+                  $("#inputLastName").val(null);
+                  $("#btn_close").click()
+                  $("#loadUsersBtn").click();
+                }
+              });
+            });
+          });
+        }, 2000);
+      })
+    });
   </script>
 </head>
   <body>
-    <nav class="navbar navbar-dark bg-dark">
-      <div class="container-fluid">
-        <span class="navbar-brand mb-0 h1">Manage users</span>
-      </div>
-    </nav>
-    <button id="loadUsersBtn" type="button" class="btn btn-primary">Load users</button>
-    <button id="addUsersBtn" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#save_Modal">Add user</button>
-    <table id="usersList" class="table">
-      <thead>
-        <tr>
-          <th scope="col">#</th>
-          <th scope="col">First</th>
-          <th scope="col">Last</th>
-          <th scope="col">Email</th>
-          <th scope="col">Role</th>
-          <th scope="col">Enabling</th>
-          <th scope="col">Delete</th>
-          <th scope="col">Edit</th>
-        </tr>
-      </thead>
-      <tbody>
-      </tbody>
-    </table>
-    <div class="modal" tabindex="-1" id="save_Modal">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">Modal title</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <form id="editForm">
-              <div class="form-row">
-                <div class="form-group col-md-6">
-                  <label for="inputFirstName">FirstName</label>
-                  <input type="text" class="form-control" id="inputFirstName" required minlength="2" maxlength="30"/>
-                </div>
-                <div class="form-group col-md-6">
-                  <label for="inputLastName">LastName</label>
-                  <input type="text" class="form-control" id="inputLastName" required minlength="2" maxlength="30"/>
-                </div>
+  <ul class="nav nav-tabs navbar-dark bg-dark" id="myTab" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Home</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Profile</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab" aria-controls="contact" aria-selected="false">Contact</button>
+    </li>
+  </ul>
+
+    <div class="tab-content" id="myTabContent">
+      <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+
+        <button id="loadUsersBtn" type="button" class="btn btn-primary">Load users</button>
+        <button id="addUsersBtn" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#save_Modal">Add user</button>
+        <table id="usersList" class="table">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">First</th>
+              <th scope="col">Last</th>
+              <th scope="col">Email</th>
+              <th scope="col">Phone</th>
+              <th scope="col">Role</th>
+              <th scope="col">Enabling</th>
+              <th scope="col">Delete</th>
+              <th scope="col">Edit</th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+        <div class="modal" tabindex="-1" id="save_Modal">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">Modal title</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
-              <div class="form-row">
-                <div class="form-group col-md-6">
-                  <label for="inputEmail">Email</label>
-                  <input type="email" class="form-control" id="inputEmail" required minlength="6" maxlength="30"/>
-                </div>
-                <div class="form-group col-md-6" id="inputPassword">
-                  <label for="inputPasswordField">Password</label>
-                  <input type="password" class="form-control" id="inputPasswordField" required minlength="6" maxlength="15">
-                </div>
-                <div class="col-md-6" id="inputStateRoles">
-                  <label for="inputStateRolesField" class="form-label">Role:</label>
-                  <select id="inputStateRolesField" class="form-select">
-                    <option value="ROLE_ADMIN">Administrator</option>
-                    <option value="ROLE_WAITER">Waiter</option>
-                  </select>
-                </div>
-                  <div class="col-md-6">
-                    <label for="inputStateEnabling" class="form-label">Enabling</label>
-                    <select id="inputStateEnabling" class="form-select">
-                      <option value="enabled">Enable</option>
-                      <option value="disabled">Disable</option>
-                    </select>
+              <div class="modal-body">
+                <form id="editForm">
+                  <div class="form-row">
+                    <div class="form-group col-md-6">
+                      <label for="inputFirstName">FirstName</label>
+                      <input type="text" class="form-control" id="inputFirstName" required minlength="2" maxlength="30"/>
+                    </div>
+                    <div class="form-group col-md-6">
+                      <label for="inputLastName">LastName</label>
+                      <input type="text" class="form-control" id="inputLastName" required minlength="2" maxlength="30"/>
+                    </div>
                   </div>
+                  <div class="form-row">
+                    <div class="form-group col-md-6">
+                      <label for="inputEmail">Email</label>
+                      <input type="email" class="form-control" id="inputEmail" required minlength="6" maxlength="30"/>
+                    </div>
+                    <div class="form-group col-md-6">
+                      <label for="inputPhone">Email</label>
+                      <input type="text" class="form-control" id="inputPhone" required minlength="8" maxlength="11"/>
+                    </div>
+                    <div class="form-group col-md-6" id="inputPassword">
+                      <label for="inputPasswordField">Password</label>
+                      <input type="password" class="form-control" id="inputPasswordField" required minlength="6" maxlength="15">
+                    </div>
+                    <div class="col-md-6" id="inputStateRoles">
+                      <label for="inputStateRolesField" class="form-label">Role:</label>
+                      <select id="inputStateRolesField" class="form-select">
+                        <option value="ROLE_ADMIN">Administrator</option>
+                        <option value="ROLE_WAITER">Waiter</option>
+                      </select>
+                    </div>
+                      <div class="col-md-6">
+                        <label for="inputStateEnabling" class="form-label">Enabling</label>
+                        <select id="inputStateEnabling" class="form-select">
+                          <option value="enabled">Enable</option>
+                          <option value="disabled">Disable</option>
+                        </select>
+                      </div>
+                  </div>
+                </form>
               </div>
-            </form>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="btn_close">Close</button>
-            <button type="button" class="btn btn-primary" id="btn_save">Save</button>
-            <button type="button" class="btn btn-primary" id="btn_add">Add</button>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="btn_close">Close</button>
+                <button type="button" class="btn btn-primary" id="btn_save">Save</button>
+                <button type="button" class="btn btn-primary" id="btn_add">Add</button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
+
+      <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+        <button id="loadOrdersBtn" type="button" class="btn btn-primary">Load orders</button>
+        <button id="addOrdersBtn" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#save_Modal">Add order</button>
+        <table id="ordersList" class="table">
+          <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Meal list</th>
+            <th scope="col">Customer</th>
+            <th scope="col">Email</th>
+            <th scope="col">Role</th>
+            <th scope="col">Enabling</th>
+            <th scope="col">Delete</th>
+            <th scope="col">Edit</th>
+          </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">3...</div>
     </div>
   </body>
 </html>

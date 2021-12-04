@@ -26,7 +26,7 @@ public class Order {
     @NotNull
     private OrderStatus status;
 
-    private String waiterId;
+    private String numOfTableOrReceiptPlace;
 
     private double totalPrice = 0.0;
 

@@ -154,14 +154,17 @@ public class AdminController {
     @PutMapping("/orders/{id}/{status}")
     public ResponseEntity<Order> changeStatusOfOrder(@PathVariable("id") String id, @PathVariable("status") String orderStatus) {
         if(id == null || orderStatus == null || orderStatus.equals("") ||
-                (!orderStatus.equalsIgnoreCase(OrderStatus.IN_PROGRESS.name()) && !orderStatus.equalsIgnoreCase(OrderStatus.DONE.name()))){
+                (!orderStatus.equalsIgnoreCase(OrderStatus.IN_PROGRESS.name()) && !orderStatus.equalsIgnoreCase(OrderStatus.DONE.name())
+                        && !orderStatus.equalsIgnoreCase(OrderStatus.CANCELLED.name()))){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         Order order;
         if (orderStatus.equalsIgnoreCase(OrderStatus.IN_PROGRESS.name())) {
             order = orderRepository.changeOrderStatus(id,OrderStatus.IN_PROGRESS);
+        } else if (orderStatus.equalsIgnoreCase(OrderStatus.CANCELLED.name())) {
+            order = orderRepository.changeOrderStatus(id, OrderStatus.CANCELLED);
         } else {
-            order = orderRepository.changeOrderStatus(id, OrderStatus.DONE);
+            order = orderRepository.changeOrderStatus(id,OrderStatus.DONE);
         }
 
         return new ResponseEntity<>(order,HttpStatus.OK);
@@ -172,6 +175,7 @@ public class AdminController {
         user.setFirstName(newUser.getFirstName());
         user.setLastName(newUser.getLastName());
         user.setEmail(newUser.getEmail());
+        user.setPhoneNumber(newUser.getPhoneNumber());
         user.setEnabled(newUser.getEnabled());
         return user;
     }

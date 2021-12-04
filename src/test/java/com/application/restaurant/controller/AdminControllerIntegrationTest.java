@@ -45,7 +45,7 @@ public class AdminControllerIntegrationTest {
     public void getAllUsersTest() throws Exception
     {
         User user = new User("Ivan", "Antonych", "iv.antonych@gmail.com",
-                "1234567", UserRoles.ROLE_REGISTERED_USER);
+                "0687734576","1234567", UserRoles.ROLE_REGISTERED_USER);
         user.setId("1");
         mongoTemplate.save(user);
         mvc.perform( MockMvcRequestBuilders
@@ -74,7 +74,7 @@ public class AdminControllerIntegrationTest {
     public void getUserTest() throws Exception
     {
         User user = new User("Ivan", "Antonych", "iv.antonych@gmail.com",
-                "1234567", UserRoles.ROLE_REGISTERED_USER);
+                "0687734576","1234567", UserRoles.ROLE_REGISTERED_USER);
         user.setId("1");
         mongoTemplate.save(user);
         mvc.perform( MockMvcRequestBuilders
@@ -99,7 +99,7 @@ public class AdminControllerIntegrationTest {
     public void deleteUserFromSystemTest() throws Exception
     {
         User user = new User("Ivan", "Antonych", "iv.antonych@gmail.com",
-                "1234567", UserRoles.ROLE_REGISTERED_USER);
+                "0687734576","1234567", UserRoles.ROLE_REGISTERED_USER);
         user.setId("1");
         mongoTemplate.save(user);
         mvc.perform( MockMvcRequestBuilders
@@ -147,7 +147,7 @@ public class AdminControllerIntegrationTest {
         List<Meal> mealList = new ArrayList<>();
         mealList.add(new Meal("1","meal", "some meal", 3.4));
         order.setMealList(mealList);
-        order.setWaiterId("test");
+        order.setNumOfTableOrReceiptPlace("test");
 
         mvc.perform( MockMvcRequestBuilders
                 .post("/api/v1/admin/orders/add")
@@ -170,7 +170,7 @@ public class AdminControllerIntegrationTest {
         List<Meal> mealList = new ArrayList<>();
         mealList.add(new Meal("1","meal", "some meal", 3.4));
         order.setMealList(mealList);
-        order.setWaiterId("test");
+        order.setNumOfTableOrReceiptPlace("test");
 
         mongoTemplate.save(order);
         mvc.perform( MockMvcRequestBuilders
@@ -193,7 +193,7 @@ public class AdminControllerIntegrationTest {
         List<Meal> mealList = new ArrayList<>();
         mealList.add(new Meal("1","meal", "some meal", 3.4));
         order.setMealList(mealList);
-        order.setWaiterId("test");
+        order.setNumOfTableOrReceiptPlace("test");
 
         Request request = new Request();
         request.setId("1");

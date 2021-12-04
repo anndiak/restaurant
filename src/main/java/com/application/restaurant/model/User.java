@@ -7,7 +7,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.validation.constraints.Email;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -24,6 +23,7 @@ public class User implements UserDetails {
     private String lastName;
     private String email;
     private String password;
+    private String phoneNumber;
     private UserRoles userRoles;
     private Boolean locked = false;
     private Boolean enabled = false;
@@ -31,11 +31,14 @@ public class User implements UserDetails {
     public User(String firstName,
                 String lastName,
                 String email,
+                String phoneNumber,
                 String password,
-                UserRoles userRoles) {
+                UserRoles userRoles
+    ) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
+        this.phoneNumber = phoneNumber;
         this.password = password;
         this.userRoles = userRoles;
     }
