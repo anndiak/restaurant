@@ -81,39 +81,40 @@
                 $("#inputStateEnabling").val("disabled");
               }
             });
-
-            $("#btn_save").click(function() {
-
-              let enabled_opt = true;
-              if ($("#inputStateEnabling").val() === "disabled") {enabled_opt = false}
-
-              let jsonVar = {
-                email: $("#inputEmail").val(),
-                firstName: $("#inputFirstName").val(),
-                lastName: $("#inputLastName").val(),
-                phoneNumber: $("#inputPhone").val(),
-                enabled: enabled_opt
-              };
-
-              $.ajax({
-                type: "PUT",
-                data: JSON.stringify(jsonVar),
-                contentType: "application/json",
-                url:"http://localhost:8080/api/v1/admin/users/" + current_user_id,
-                success: function (data) {
-                  jsonVar = null;
-                  $("#inputEmail").val(null);
-                  $("#inputFirstName").val(null);
-                  $("#inputLastName").val(null);
-                  $("#inputPhone").val(null);
-                  $("#btn_close").click()
-                  $("#loadUsersBtn").click();
-                }
-              });
-            });
           });
         }, 2000);
       })
+
+      $("#btn_save").click(function() {
+
+        let enabled_opt = true;
+        if ($("#inputStateEnabling").val() === "disabled") {enabled_opt = false}
+
+        let jsonVar = {
+          email: $("#inputEmail").val(),
+          firstName: $("#inputFirstName").val(),
+          lastName: $("#inputLastName").val(),
+          phoneNumber: $("#inputPhone").val(),
+          enabled: enabled_opt
+        };
+
+        $.ajax({
+          type: "PUT",
+          data: JSON.stringify(jsonVar),
+          contentType: "application/json",
+          url:"http://localhost:8080/api/v1/admin/users/" + current_user_id,
+          success: function (data) {
+            jsonVar = null;
+            $("#inputEmail").val(null);
+            $("#inputFirstName").val(null);
+            $("#inputLastName").val(null);
+            $("#inputPhone").val(null);
+            $("#btn_close").click()
+            $("#loadUsersBtn").click();
+          }
+        });
+      });
+
       $("#addUsersBtn").click(() => {
         $("#btn_save").hide();
         $("#inputPassword").show();
@@ -220,28 +221,6 @@
             $("#inputOrderStatus").val(order.status);
           });
 
-          $("#btn_saveOrder").click(function() {
-
-            let jsonVar = {
-              numOfTableOrReceiptPlace: $("#inputTableOrReceiptPlace").val(),
-              status: $("#inputOrderStatus").val()
-            };
-
-            $.ajax({
-              type: "PUT",
-              data: JSON.stringify(jsonVar),
-              contentType: "application/json",
-              url: "http://localhost:8080/api/v1/admin/orders/" + current_order_id,
-              success: function (data) {
-                jsonVar = null;
-                $("#inputTableOrReceiptPlace").val("");
-                $("#inputOrderStatus").val("IN_PROGRESS");
-                $("#btn_closeOrder").click()
-                $("#loadOrdersBtn").click();
-              }
-            });
-          });
-
           $(".open_modal_add_order").click(function () {
             $("#btn_saveOrder").hide();
             $("#inputOrderStatus").hide();
@@ -300,6 +279,28 @@
             });
           });
         }, 2000);
+      });
+
+      $("#btn_saveOrder").click(function() {
+
+        let jsonVar = {
+          numOfTableOrReceiptPlace: $("#inputTableOrReceiptPlace").val(),
+          status: $("#inputOrderStatus").val()
+        };
+
+        $.ajax({
+          type: "PUT",
+          data: JSON.stringify(jsonVar),
+          contentType: "application/json",
+          url: "http://localhost:8080/api/v1/admin/orders/" + current_order_id,
+          success: function (data) {
+            jsonVar = null;
+            $("#inputTableOrReceiptPlace").val("");
+            $("#inputOrderStatus").val("IN_PROGRESS");
+            $("#btn_closeOrder").click()
+            $("#loadOrdersBtn").click();
+          }
+        });
       });
 
       function getMealNamesFromOrder(mealList) {
@@ -375,7 +376,7 @@
                       <input type="email" class="form-control" id="inputEmail" required minlength="6" maxlength="30"/>
                     </div>
                     <div class="form-group col-md-6">
-                      <label for="inputPhone">Email</label>
+                      <label for="inputPhone">Phone</label>
                       <input type="text" class="form-control" id="inputPhone" required minlength="8" maxlength="11"/>
                     </div>
                     <div class="form-group col-md-6" id="inputPassword">
