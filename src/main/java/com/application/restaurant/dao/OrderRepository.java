@@ -1,7 +1,6 @@
 package com.application.restaurant.dao;
 
 import com.application.restaurant.model.Order;
-import com.application.restaurant.model.OrderStatus;
 import org.springframework.data.mongodb.core.query.Query;
 
 import java.util.List;
@@ -16,7 +15,7 @@ public interface OrderRepository {
 
     Order addOrder(Order order);
 
-    Order changeOrderStatus(String id, OrderStatus orderStatus);
+    Order changeOrder(Order order);
 
     void deleteOrderById(String id);
 }

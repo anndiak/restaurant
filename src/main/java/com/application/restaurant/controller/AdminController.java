@@ -4,14 +4,19 @@ import com.application.restaurant.dao.OrderRepository;
 import com.application.restaurant.dao.RequestRepository;
 import com.application.restaurant.dao.UserRepository;
 import com.application.restaurant.model.*;
+import com.application.restaurant.model.dto.ChangeOrderDto;
+import com.application.restaurant.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -29,6 +34,11 @@ public class AdminController {
 
     @Autowired
     private OrderRepository orderRepository;
+
+    public User getAuthenticatedUser(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return (User)auth.getPrincipal();
+    }
 
     @RequestMapping("/homepage")
     public ModelAndView homePage() {
@@ -145,29 +155,28 @@ public class AdminController {
         return new ResponseEntity<>(orderRepository.getOrderById(id),HttpStatus.OK);
     }
 
+    @Autowired
+    private OrderService orderService;
+
     @PostMapping("/orders/add")
     public ResponseEntity<Order> addOrderToSystem(@Valid @RequestBody Order order) {
-        orderRepository.addOrder(order);
-        return new ResponseEntity<>(order, HttpStatus.OK);
+        order.setUserId(getAuthenticatedUser().getId());
+        order.setTotalPrice(orderService.countOrderPrice(order.getMealList()));
+        return new ResponseEntity<>(orderRepository.addOrder(order), HttpStatus.OK);
     }
 
-    @PutMapping("/orders/{id}/{status}")
-    public ResponseEntity<Order> changeStatusOfOrder(@PathVariable("id") String id, @PathVariable("status") String orderStatus) {
-        if(id == null || orderStatus == null || orderStatus.equals("") ||
-                (!orderStatus.equalsIgnoreCase(OrderStatus.IN_PROGRESS.name()) && !orderStatus.equalsIgnoreCase(OrderStatus.DONE.name())
-                        && !orderStatus.equalsIgnoreCase(OrderStatus.CANCELLED.name()))){
+    @PutMapping("/orders/{id}")
+    public ResponseEntity<Order> changeOrder(@Valid @RequestBody ChangeOrderDto orderDto, @PathVariable("id") String id) {
+        if(id == null || orderDto == null ) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        Order order;
-        if (orderStatus.equalsIgnoreCase(OrderStatus.IN_PROGRESS.name())) {
-            order = orderRepository.changeOrderStatus(id,OrderStatus.IN_PROGRESS);
-        } else if (orderStatus.equalsIgnoreCase(OrderStatus.CANCELLED.name())) {
-            order = orderRepository.changeOrderStatus(id, OrderStatus.CANCELLED);
-        } else {
-            order = orderRepository.changeOrderStatus(id,OrderStatus.DONE);
+
+        if(orderRepository.getOrderById(id) == null){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        return new ResponseEntity<>(order,HttpStatus.OK);
+        Order changedOrder = updateOrderFields(id, orderDto);
+        return new ResponseEntity<>(orderRepository.changeOrder(changedOrder),HttpStatus.OK);
     }
 
     private User updateUserFields(String id, User newUser){
@@ -180,6 +189,10 @@ public class AdminController {
         return user;
     }
 
-
-
+    private Order updateOrderFields(String id, ChangeOrderDto orderDto){
+        Order order = orderRepository.getOrderById(id);
+        order.setNumOfTableOrReceiptPlace(orderDto.getNumOfTableOrReceiptPlace());
+        order.setStatus(orderDto.getStatus());
+        return order;
+    }
 }

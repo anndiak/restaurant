@@ -2,7 +2,6 @@ package com.application.restaurant.dao.impl;
 
 import com.application.restaurant.dao.OrderRepository;
 import com.application.restaurant.model.Order;
-import com.application.restaurant.model.OrderStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Component;
@@ -35,9 +34,7 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
-    public Order changeOrderStatus(String id, OrderStatus orderStatus) {
-        Order order = mt.findById(id, Order.class);
-        order.setStatus(orderStatus);
+    public Order changeOrder(Order order) {
         return mt.save(order);
     }
 
