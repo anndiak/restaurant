@@ -159,7 +159,17 @@
     $( document ).ready(function() {
 
       var gbmap_orders;
+      var gb_meals = [];
       var current_order_id;
+
+      $.get("/api/v1/admin/meals", function (data) {
+        var options =  ''
+        gb_meals = data;
+        data.forEach(function (row) {
+          options += '<option value="'+row.price+'">'+row.name+'</option>';
+        });
+        $('.meal_selector').html(options);
+      });
 
       $("#loadUsersBtn").click();
 
@@ -193,8 +203,13 @@
 
           $(".order-edit-btn").click((event) =>{
 
+            $("#btn_add_meal").hide();
             $("#btn_addOrder").hide();
+            $("#inputMeals").hide();
+            $("#meal_selector_id").hide();
+
             $("#btn_saveOrder").show();
+            $("#inputOrderStatus").show();
 
             let id = $(event.target).attr("value");
             current_order_id = id;
@@ -225,43 +240,67 @@
                 $("#loadOrdersBtn").click();
               }
             });
-          })
-            $("#btn_addOrder").click(function() {
+          });
 
-              let enabled_opt = true;
-              if ($("#inputStateEnabling").val() === "disabled") {enabled_opt = false}
+          $(".open_modal_add_order").click(function () {
+            $("#btn_saveOrder").hide();
+            $("#inputOrderStatus").hide();
+
+            $("#btn_addOrder").show();
+            $("#inputMeals").show();
+            $("#meal_selector_id").show();
+            $("#btn_add_meal").show();
+          });
+
+          $("#btn_addOrder").click(function() {
+              let taken_meals = [];
+
+              let lable_meals = $("#inputMeals").text().split(", ");
+              gb_meals.forEach(function (meal) {
+                for (let element of lable_meals) {
+                  if (element.includes(meal.name)) {
+                    taken_meals.push(meal);
+                    break;
+                  }
+                }
+              })
 
               let jsonVar = {
-                email: $("#inputEmail").val(),
-                firstName: $("#inputFirstName").val(),
-                lastName: $("#inputLastName").val(),
-                phoneNumber: $("#inputPhone").val(),
-                password: $("#inputPasswordField").val(),
-                enabled: enabled_opt,
-                userRoles: $("#inputStateRolesField").val()
+                mealList: taken_meals,
+                numOfTableOrReceiptPlace: $("#inputTableOrReceiptPlace").val()
               };
 
               $.ajax({
                 type: "POST",
                 data: JSON.stringify(jsonVar),
                 contentType: "application/json",
-                url:"http://localhost:8080/api/v1/admin/users/add",
+                url:"http://localhost:8080/api/v1/admin/orders/add",
                 success: function (data) {
                   jsonVar = null;
-                  $("#inputEmail").val(null);
-                  $("#inputFirstName").val(null);
-                  $("#inputLastName").val(null);
-                  $("#inputPhone").val(null);
-                  $("#inputPasswordField").val(null),
-                          $("#inputStateRolesField").val(null)
-                  $("#btn_close").click()
-                  $("#loadUsersBtn").click();
+                  $("#inputTableOrReceiptPlace").val(null),
+                  $("#btn_closeOrder").click()
+                  $("#loadOrdersBtn").click();
                 }
               });
+
+            });
+
+            $("#btn_add_meal").click(() => {
+              let lable = $("#inputMeals").text().substr(0, $("#inputMeals").text().length - 2);
+
+              if(lable !== "Meal:[") {
+                $("#inputMeals").text(lable).append(", ").append($("#meal_selector_id option:selected").text()).append(" ]");
+              } else {
+                $("#inputMeals").text(lable).append($("#meal_selector_id option:selected").text()).append(" ]");
+              }
+            });
+
+            $(".close_meal_modal").click(function () {
+              $("#inputMeals").text("Meal:[ ]");
             });
           });
         }, 2000);
-      })
+      });
 
       function getMealNamesFromOrder(mealList) {
         let mealNameList = "";
@@ -372,7 +411,7 @@
 
       <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
         <button id="loadOrdersBtn" type="button" class="btn btn-primary">Load orders</button>
-        <button id="addOrdersBtn" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#save_Modal">Add order</button>
+        <button id="addOrdersBtn" type="button" class="btn btn-primary open_modal_add_order" data-bs-toggle="modal" data-bs-target="#saveOrder_Modal">Add order</button>
         <table id="ordersList" class="table">
           <thead>
           <tr>
@@ -393,16 +432,24 @@
             <div class="modal-content">
               <div class="modal-header">
                 <h5 class="modal-title">Modal title</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close close_meal_modal" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body">
                 <form id="editOrdersForm">
                   <div class="form-row">
-                    <div class="form-group col-md-6">
+                      <div class="col-md-8" >
+                        <select class="form-select meal_selector" id="meal_selector_id">
+                          <option value=''><strong>Meals</strong></option>
+                        </select>
+                      </div>
+                      <div class="col">
+                        <button type="button" class="btn btn-primary" id="btn_add_meal">Add</button>
+                      </div>
+                    <div class="form-group col-md-8">
                       <label for="inputTableOrReceiptPlace">Table or receipt place</label>
                       <input type="text" class="form-control" id="inputTableOrReceiptPlace">
                     </div>
-                    <div class="form-group col-md-6">
+                    <div class="form-group col-md-8">
                       <label for="inputOrderStatus">Order status</label>
                       <select id="inputOrderStatus" class="form-select">
                         <option value="IN_PROGRESS">IN_PROGRESS</option>
@@ -411,11 +458,15 @@
                         <option value="CANCELLED">CANCELLED</option>
                       </select>
                     </div>
+
+                    <div class="form-group col-md-12">
+                      <label id="inputMeals" style="color:DarkOrchid">Meal:[ ]</label>
+                    </div>
                   </div>
                 </form>
               </div>
               <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="btn_closeOrder">Close</button>
+                <button type="button" class="btn btn-secondary close_meal_modal" data-bs-dismiss="modal" id="btn_closeOrder">Close</button>
                 <button type="button" class="btn btn-primary" id="btn_saveOrder">Save</button>
                 <button type="button" class="btn btn-primary" id="btn_addOrder">Add</button>
               </div>

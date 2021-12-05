@@ -1,9 +1,11 @@
 package com.application.restaurant.controller;
 
+import com.application.restaurant.dao.MealRepository;
 import com.application.restaurant.dao.OrderRepository;
 import com.application.restaurant.dao.RequestRepository;
 import com.application.restaurant.dao.UserRepository;
 import com.application.restaurant.model.*;
+import com.application.restaurant.model.dto.AddOrderDto;
 import com.application.restaurant.model.dto.ChangeOrderDto;
 import com.application.restaurant.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -34,6 +35,12 @@ public class AdminController {
 
     @Autowired
     private OrderRepository orderRepository;
+
+    @Autowired
+    private OrderService orderService;
+
+    @Autowired
+    private MealRepository mealRepository;
 
     public User getAuthenticatedUser(){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -155,13 +162,14 @@ public class AdminController {
         return new ResponseEntity<>(orderRepository.getOrderById(id),HttpStatus.OK);
     }
 
-    @Autowired
-    private OrderService orderService;
-
     @PostMapping("/orders/add")
-    public ResponseEntity<Order> addOrderToSystem(@Valid @RequestBody Order order) {
+    public ResponseEntity<Order> addOrderToSystem(@Valid @RequestBody AddOrderDto orderDto) {
+        Order order = new Order();
         order.setUserId(getAuthenticatedUser().getId());
-        order.setTotalPrice(orderService.countOrderPrice(order.getMealList()));
+        order.setTotalPrice(orderService.countOrderPrice(orderDto.getMealList()));
+        order.setStatus(OrderStatus.IN_PROGRESS);
+        order.setMealList(orderDto.getMealList());
+        order.setNumOfTableOrReceiptPlace(orderDto.getNumOfTableOrReceiptPlace());
         return new ResponseEntity<>(orderRepository.addOrder(order), HttpStatus.OK);
     }
 
@@ -177,6 +185,14 @@ public class AdminController {
 
         Order changedOrder = updateOrderFields(id, orderDto);
         return new ResponseEntity<>(orderRepository.changeOrder(changedOrder),HttpStatus.OK);
+    }
+
+    @GetMapping("/meals")
+    public ResponseEntity<List<Meal>> getAllMeals(){ return new ResponseEntity<>(mealRepository.getAllMeals(), HttpStatus.OK);}
+
+    @PostMapping("/meals/add")
+    public ResponseEntity<Meal> addMealToSystem(@RequestBody Meal meal) {
+        return new ResponseEntity<>(mealRepository.creatMeal(meal), HttpStatus.OK);
     }
 
     private User updateUserFields(String id, User newUser){
