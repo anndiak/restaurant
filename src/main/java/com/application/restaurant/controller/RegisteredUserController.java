@@ -72,20 +72,7 @@ public class RegisteredUserController {
         request.setUserId(getAuthenticatedUser().getId());
         request.setOrder(order);
         request.setRequestStatus(RequestStatus.IN_PROGRESS);
-        requestRepository.sentRequest(request);
+        requestRepository.createRequest(request);
         return new ResponseEntity<>(request, HttpStatus.OK);
-    }
-
-    @DeleteMapping("/requests/{request_id}/cancel")
-    public ResponseEntity<Request> cancelOrderRequest(@PathVariable("request_id") String request_id){
-        if(request_id == null ){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        if(requestRepository.getRequestById(request_id) == null){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } else {
-            requestRepository.cancelRequest(requestRepository.getRequestById(request_id));
-            return new ResponseEntity<>(HttpStatus.OK);
-        }
     }
 }

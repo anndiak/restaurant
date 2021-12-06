@@ -10,9 +10,9 @@ public interface RequestRepository {
 
     Request getRequestById(String id);
 
-    void cancelRequest(Request request);
+    void removeRequest(Request request);
 
-    void acceptRequest(Request request);
+    Request saveRequest(Request request);
 
-    void sentRequest(Request request);
+    void createRequest(Request request);
 }

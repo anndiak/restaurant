@@ -25,18 +25,17 @@ public class RequestRepositoryImpl implements RequestRepository {
     }
 
     @Override
-    public void cancelRequest(Request request) {
+    public void removeRequest(Request request) {
         mt.remove(request);
     }
 
     @Override
-    public void acceptRequest(Request request) {
-        mt.insert(request.getOrder(), "orders");
-        mt.remove(request);
+    public Request saveRequest(Request request) {
+        return mt.save(request);
     }
 
     @Override
-    public void sentRequest(Request request) {
+    public void createRequest(Request request) {
         mt.insert(request);
     }
 }

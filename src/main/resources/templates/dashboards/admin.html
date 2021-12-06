@@ -314,6 +314,92 @@
         return mealNameList;
       }
     });
+
+
+    $( document ).ready(function() {
+
+      $("#loadRequestsBtn").click(() => {
+        $("#loadRequestsBtn").html("<span class=\"spinner-border spinner-border-sm\" role=\"status\" aria-hidden=\"true\"></span>Loading...")
+        setTimeout(() => {
+          $.get("/api/v1/admin/requests", function (data) {
+            console.log(data);
+            let rows = "";
+            let rowNumber = 1;
+            data.forEach(function (row) {
+              current_order_id = row.id;
+
+              let user = gbmap.get(row.userId);
+              let order = row.order;
+
+              console.log(row);
+
+              if (row.requestStatus === "CANCELLED" || row.requestStatus === "ACCEPTED") {
+                rows += `<tr>
+                        <th scope="row">${rowNumber++}</th>
+                        <td>${getMealNamesFromOrder(order.mealList)}</td>
+                        <td>${user.firstName} ${user.lastName}<p>${user.phoneNumber}</p></td>
+                        <td>${order.totalPrice}</td>
+                        <td>${order.numOfTableOrReceiptPlace}</td>
+                        <td>${row.requestStatus}</td>
+                        <td><button type="button" class="btn btn-secondary" disabled">Accept</button></td>
+                        <td><button type="button" class="btn btn-secondary" disabled">Edit</button></td>
+                      </tr>`;
+              } else {
+                rows += `<tr>
+                        <th scope="row">${rowNumber++}</th>
+                        <td>${getMealNamesFromOrder(order.mealList)}</td>
+                        <td>${user.firstName} ${user.lastName}<p>${user.phoneNumber}</p></td>
+                        <td>${order.totalPrice}</td>
+                        <td>${order.numOfTableOrReceiptPlace}</td>
+                        <td>${row.requestStatus}</td>
+                        <td><button id='acceptRequestBtn' type='button' class='btn btn-primary request-accept-btn' value="${row.id}">Accept</button></td>
+                        <td><button id='cancelRequestBtn' type='button' class='btn btn-danger request-cancel-btn' value="${row.id}">Cancel</button></td>
+                      </tr>`;
+              }
+              });
+
+            $("#requestsList tbody").html(rows);
+            $("#loadRequestsBtn").html("Load requests");
+
+            $("#acceptRequestBtn").click(function (event) {
+              let id = $(event.target).attr("value");
+
+              $.ajax({
+                type: "PUT",
+                url:"http://localhost:8080/api/v1/admin/requests/" + id + "/accept",
+                success: function (data) {
+                  $("#loadRequestsBtn").click();
+                }
+              });
+            });
+
+            $("#cancelRequestBtn").click(function (event) {
+              let id = $(event.target).attr("value");
+
+              $.ajax({
+                type: "PUT",
+                url:"http://localhost:8080/api/v1/admin/requests/" + id + "/cancel",
+                success: function (data) {
+                  $("#loadRequestsBtn").click();
+                }
+              });
+            });
+
+          })
+        })
+      });
+
+      function getMealNamesFromOrder(mealList) {
+        let mealNameList = "";
+        for (let i = 0; i < mealList.length; i++) {
+          mealNameList += mealList[i].name;
+          if (i !== mealList.length - 1) {
+            mealNameList += ", ";
+          }
+        }
+        return mealNameList;
+      }
+    });
   </script>
 </head>
   <body>
@@ -411,6 +497,7 @@
       </div>
 
       <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+
         <button id="loadOrdersBtn" type="button" class="btn btn-primary">Load orders</button>
         <button id="addOrdersBtn" type="button" class="btn btn-primary open_modal_add_order" data-bs-toggle="modal" data-bs-target="#saveOrder_Modal">Add order</button>
         <table id="ordersList" class="table">
@@ -476,7 +563,26 @@
         </div>
       </div>
 
-      <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">3...</div>
+      <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+        <button id="loadRequestsBtn" type="button" class="btn btn-primary">Load requests</button>
+        <table id="requestsList" class="table">
+          <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Meal list</th>
+            <th scope="col">Customer</th>
+            <th scope="col">Total price</th>
+            <th scope="col">Table or receipt place</th>
+            <th scope="col">Request status</th>
+            <th scope="col">Accept</th>
+            <th scope="col">Cancel</th>
+          </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+
+      </div>
     </div>
   </body>
 </html>

@@ -8,6 +8,7 @@ import com.application.restaurant.model.*;
 import com.application.restaurant.model.dto.AddOrderDto;
 import com.application.restaurant.model.dto.ChangeOrderDto;
 import com.application.restaurant.service.OrderService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,6 +46,16 @@ public class AdminController {
     public User getAuthenticatedUser(){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         return (User)auth.getPrincipal();
+    }
+
+    @PostMapping("/test")
+    public void test() {
+        Order order = orderRepository.getOrderById("61acd12d4a1a64087dee6221");
+        Request request = new Request();
+        request.setUserId(order.getUserId());
+        request.setOrder(order);
+        request.setRequestStatus(RequestStatus.IN_PROGRESS);
+        requestRepository.createRequest(request);
     }
 
     @RequestMapping("/homepage")
@@ -121,28 +132,35 @@ public class AdminController {
     }
 
     @PutMapping("/requests/{id}/accept")
-    public ResponseEntity<HttpStatus> acceptRequest(@PathVariable("id") String id) {
+    public ResponseEntity<Request> acceptOrderRequest(@PathVariable("id") String id){
         if(id == null ){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        if(requestRepository.getRequestById(id) == null){
+        Request request = requestRepository.getRequestById(id);
+
+        if(request == null){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        requestRepository.acceptRequest(requestRepository.getRequestById(id));
-        return new ResponseEntity<>(HttpStatus.OK);
+        request.setRequestStatus(RequestStatus.ACCEPTED);
+        requestRepository.saveRequest(request);
+
+        return new ResponseEntity<>(request,HttpStatus.OK);
     }
 
-    @DeleteMapping("/requests/{id}")
-    public ResponseEntity<Request> cancelRequest(@PathVariable("id") String id) {
-        if(id == null ){
+    @PutMapping("/requests/{request_id}/cancel")
+    public ResponseEntity<Request> cancelOrderRequest(@PathVariable("request_id") String request_id){
+        if(request_id == null ){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        if(requestRepository.getRequestById(id) == null){
+        Request request = requestRepository.getRequestById(request_id);
+
+        if(request == null){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        requestRepository.cancelRequest(requestRepository.getRequestById(id));
-        return new ResponseEntity<>(HttpStatus.OK);
+        request.setRequestStatus(RequestStatus.CANCELLED);
+        requestRepository.saveRequest(request);
+        return new ResponseEntity<>(request,HttpStatus.OK);
     }
 
     @GetMapping("/orders")
