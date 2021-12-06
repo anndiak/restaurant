@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 <head>
   <meta charset="ISO-8859-1">
   <title>Admin</title>
@@ -34,7 +34,8 @@
                 role_opt = "Waiter"
               }
 
-              rows += `<tr>
+              if ($("#filteringUsers").val() === row.userRoles) {
+                rows += `<tr>
                         <th scope="row">${rowNumber++}</th>
                         <td>${row.firstName}</td>
                         <td>${row.lastName}</td>
@@ -45,6 +46,7 @@
                         <td><button id='deleteUserBtn' type='button' class='btn btn-danger user-remove-btn' value="${row.id}">Delete</button></td>
                         <td><button type="button" class="btn btn-primary user-edit-btn" data-bs-toggle="modal" data-bs-target="#save_Modal" value="${row.id}">Edit</button></td>
                       </tr>`;
+              }
             });
             $("#usersList tbody").html(rows);
             $("#loadUsersBtn").html("Load users");
@@ -188,8 +190,9 @@
 
               let user = gbmap.get(row.userId);
 
+              if ($("#filteringOrders").val() === row.status) {
 
-              rows += `<tr>
+                rows += `<tr>
                         <th scope="row">${rowNumber++}</th>
                         <td>${getMealNamesFromOrder(row.mealList)}</td>
                         <td>${user.firstName} ${user.lastName}<p>${user.phoneNumber}</p></td>
@@ -198,6 +201,7 @@
                         <td>${row.status}</td>
                         <td><button type="button" class="btn btn-primary order-edit-btn" data-bs-toggle="modal" data-bs-target="#saveOrder_Modal" value="${row.id}">Edit</button></td>
                       </tr>`;
+              }
             });
             $("#ordersList tbody").html(rows);
             $("#loadOrdersBtn").html("Load orders");
@@ -332,9 +336,10 @@
               let order = row.order;
 
               console.log(row);
+              if (($("#filteringRequests").val() === row.requestStatus)) {
 
-              if (row.requestStatus === "CANCELLED" || row.requestStatus === "ACCEPTED") {
-                rows += `<tr>
+                if (row.requestStatus === "CANCELLED" || row.requestStatus === "ACCEPTED") {
+                  rows += `<tr>
                         <th scope="row">${rowNumber++}</th>
                         <td>${getMealNamesFromOrder(order.mealList)}</td>
                         <td>${user.firstName} ${user.lastName}<p>${user.phoneNumber}</p></td>
@@ -344,8 +349,8 @@
                         <td><button type="button" class="btn btn-secondary" disabled">Accept</button></td>
                         <td><button type="button" class="btn btn-secondary" disabled">Edit</button></td>
                       </tr>`;
-              } else {
-                rows += `<tr>
+                } else {
+                  rows += `<tr>
                         <th scope="row">${rowNumber++}</th>
                         <td>${getMealNamesFromOrder(order.mealList)}</td>
                         <td>${user.firstName} ${user.lastName}<p>${user.phoneNumber}</p></td>
@@ -355,6 +360,7 @@
                         <td><button id='acceptRequestBtn' type='button' class='btn btn-primary request-accept-btn' value="${row.id}">Accept</button></td>
                         <td><button id='cancelRequestBtn' type='button' class='btn btn-danger request-cancel-btn' value="${row.id}">Cancel</button></td>
                       </tr>`;
+                }
               }
               });
 
@@ -404,22 +410,35 @@
 </head>
   <body>
   <ul class="nav nav-tabs navbar-dark bg-dark" id="myTab" role="tablist">
-    <li class="nav-item" role="presentation">
-      <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Home</button>
-    </li>
-    <li class="nav-item" role="presentation">
-      <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Profile</button>
-    </li>
-    <li class="nav-item" role="presentation">
-      <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab" aria-controls="contact" aria-selected="false">Contact</button>
-    </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="users-tab" data-bs-toggle="tab" data-bs-target="#users" type="button" role="tab" aria-controls="users" aria-selected="true">Users</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="orders-tab" data-bs-toggle="tab" data-bs-target="#orders" type="button" role="tab" aria-controls="orders" aria-selected="false">Orders</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="requests-tab" data-bs-toggle="tab" data-bs-target="#requests" type="button" role="tab" aria-controls="requests" aria-selected="false">Requests</button>
+      </li>
+      <li class="nav-item justify-content-end" role="presentation">
+        <button class="nav-link" id="requests2-tab" data-bs-toggle="tab" data-bs-target="#requests" type="button" role="tab" aria-controls="requests" aria-selected="false">Requests</button>
+      </li>
   </ul>
 
     <div class="tab-content" id="myTabContent">
-      <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+      <div class="tab-pane fade show active" id="users" role="tabpanel" aria-labelledby="users-tab">
 
-        <button id="loadUsersBtn" type="button" class="btn btn-primary">Load users</button>
-        <button id="addUsersBtn" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#save_Modal">Add user</button>
+            <button id="loadUsersBtn" type="button" class="btn btn-primary">Load users</button>
+            <button id="addUsersBtn" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#save_Modal">Add user</button>
+
+        <div class="form-group col-md-3" style="margin-top: 10px; margin-bottom:10px;">
+            <select id="filteringUsers" class="form-select filter-users-select">
+              <option value="ROLE_ADMIN">Administrator</option>
+              <option value="ROLE_WAITER">Waiter</option>
+              <option value="ROLE_USER">User</option>
+            </select>
+          </div>
+
+
         <table id="usersList" class="table">
           <thead>
             <tr>
@@ -496,10 +515,18 @@
         </div>
       </div>
 
-      <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+      <div class="tab-pane fade" id="orders" role="tabpanel" aria-labelledby="orders-tab">
 
         <button id="loadOrdersBtn" type="button" class="btn btn-primary">Load orders</button>
         <button id="addOrdersBtn" type="button" class="btn btn-primary open_modal_add_order" data-bs-toggle="modal" data-bs-target="#saveOrder_Modal">Add order</button>
+        <div class="form-group col-md-3" style="margin-top: 10px; margin-bottom:10px;">
+          <select id="filteringOrders" class="form-select">
+            <option value="IN_PROGRESS">In progress</option>
+            <option value="DONE">Done</option>
+            <option value="DELIVERED">Delivered</option>
+            <option value="CANCELLED">Cancelled</option>
+          </select>
+        </div>
         <table id="ordersList" class="table">
           <thead>
           <tr>
@@ -563,8 +590,17 @@
         </div>
       </div>
 
-      <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+      <div class="tab-pane fade" id="requests" role="tabpanel" aria-labelledby="requests-tab">
         <button id="loadRequestsBtn" type="button" class="btn btn-primary">Load requests</button>
+
+        <div class="form-group col-md-3" style="margin-top: 10px; margin-bottom:10px;">
+          <select id="filteringRequests" class="form-select filter-users-select">
+            <option value="IN_PROGRESS">In progress</option>
+            <option value="ACCEPTED">Accepted</option>
+            <option value="CANCELLED">Cancelled</option>
+          </select>
+        </div>
+
         <table id="requestsList" class="table">
           <thead>
           <tr>
