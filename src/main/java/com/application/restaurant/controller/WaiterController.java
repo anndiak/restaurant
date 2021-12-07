@@ -1,22 +1,23 @@
 package com.application.restaurant.controller;
 
+import com.application.restaurant.dao.MealRepository;
 import com.application.restaurant.dao.OrderRepository;
 import com.application.restaurant.dao.RequestRepository;
 import com.application.restaurant.dao.UserRepository;
 import com.application.restaurant.model.*;
+import com.application.restaurant.model.dto.AddOrderDto;
+import com.application.restaurant.model.dto.ChangeOrderDto;
+import com.application.restaurant.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "api/v1/waiter")
@@ -31,6 +32,13 @@ public class WaiterController {
     @Autowired
     private OrderRepository orderRepository;
 
+    @Autowired
+    private MealRepository mealRepository;
+
+    @Autowired
+    private OrderService orderService;
+
+    @GetMapping("/me")
     public User getAuthenticatedUser(){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         return (User)auth.getPrincipal();
@@ -41,30 +49,9 @@ public class WaiterController {
         return new ModelAndView("dashboards/waiter");
     }
 
-    @PostMapping("/orders/add")
-    public ResponseEntity<Order> addOrderToSystem(@Valid @RequestBody Order order) {
-        orderRepository.addOrder(order);
-        return new ResponseEntity<>(order, HttpStatus.OK);
-    }
-
-    @GetMapping("/users/waiters")
+    @GetMapping("/users")
     public ResponseEntity<List<User>> getAllWaiters() {
-        List<User> waiters = userRepository.findAllUsersByFilter(Query.query(Criteria.where("roles").is(UserRoles.ROLE_WAITER)));
-        return new ResponseEntity<>(waiters, HttpStatus.OK);
-    }
-
-    @GetMapping("/orders/{waiter_id}")
-    public ResponseEntity<List<Order>> getWaiterOrders(@PathVariable("waiter_id") String waiter_id) {
-        return new ResponseEntity<>(getOrdersByWaiterId(waiter_id) ,HttpStatus.OK);
-    }
-
-    @GetMapping("/orders/{waiter_id}/{id}")
-    public ResponseEntity<Order> getWaiterOrder(@PathVariable("waiter_id") String waiter_id, @PathVariable("id") String id) {
-        Optional<Order> foundedOrder = getOrdersByWaiterId(waiter_id).stream().filter(order -> order.getId().equals(id)).findAny();
-        if (foundedOrder.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(foundedOrder.get(),HttpStatus.OK);
+        return new ResponseEntity<>(userRepository.findAllUsers(), HttpStatus.OK);
     }
 
     @GetMapping("/orders")
@@ -84,8 +71,29 @@ public class WaiterController {
         return new ResponseEntity<>(orderRepository.getOrderById(id),HttpStatus.OK);
     }
 
-    private List<Order> getOrdersByWaiterId (String waiter_id) {
-        return orderRepository.getOrdersByFilter(Query.query(Criteria.where("waiterId").is(waiter_id)));
+    @PostMapping("/orders/add")
+    public ResponseEntity<Order> addOrderToSystem(@Valid @RequestBody AddOrderDto orderDto) {
+        Order order = new Order();
+        order.setUserId(getAuthenticatedUser().getId());
+        order.setTotalPrice(orderService.countOrderPrice(orderDto.getMealList()));
+        order.setStatus(OrderStatus.IN_PROGRESS);
+        order.setMealList(orderDto.getMealList());
+        order.setNumOfTableOrReceiptPlace(orderDto.getNumOfTableOrReceiptPlace());
+        return new ResponseEntity<>(orderRepository.addOrder(order), HttpStatus.OK);
+    }
+
+    @PutMapping("/orders/{id}")
+    public ResponseEntity<Order> changeOrder(@Valid @RequestBody ChangeOrderDto orderDto, @PathVariable("id") String id) {
+        if(id == null || orderDto == null ) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        if(orderRepository.getOrderById(id) == null){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        Order changedOrder = updateOrderFields(id, orderDto);
+        return new ResponseEntity<>(orderRepository.changeOrder(changedOrder),HttpStatus.OK);
     }
 
     @GetMapping("/requests/{id}")
@@ -98,6 +106,21 @@ public class WaiterController {
         }
         final Request request = requestRepository.getRequestById(id);
         return new ResponseEntity<>(request,HttpStatus.OK);
+    }
+
+    @GetMapping("/meals")
+    public ResponseEntity<List<Meal>> getAllMeals(){ return new ResponseEntity<>(mealRepository.getAllMeals(), HttpStatus.OK);}
+
+    @PostMapping("/meals/add")
+    public ResponseEntity<Meal> addMealToSystem(@RequestBody Meal meal) {
+        return new ResponseEntity<>(mealRepository.creatMeal(meal), HttpStatus.OK);
+    }
+
+    private Order updateOrderFields(String id, ChangeOrderDto orderDto){
+        Order order = orderRepository.getOrderById(id);
+        order.setNumOfTableOrReceiptPlace(orderDto.getNumOfTableOrReceiptPlace());
+        order.setStatus(orderDto.getStatus());
+        return order;
     }
 }
 

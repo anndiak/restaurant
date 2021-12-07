@@ -32,6 +32,8 @@
                 role_opt = "Administrator"
               } else if(row.userRoles === "ROLE_WAITER") {
                 role_opt = "Waiter"
+              } else if(row.userRoles === "ROLE_REGISTERED_USER") {
+                role_opt = "User"
               }
 
               if ($("#filteringUsers").val() === row.userRoles) {
@@ -192,10 +194,21 @@
 
               if ($("#filteringOrders").val() === row.status) {
 
+                console.log(user);
+
+                let role;
+                if (user.userRoles === "ROLE_ADMIN"){
+                  role = "Administrator"
+                } else if (user.userRoles === "ROLE_WAITER"){
+                  role = "Waiter"
+                } else if(user.userRoles === "ROLE_REGISTERED_USER"){
+                  role = "User"
+                }
+
                 rows += `<tr>
                         <th scope="row">${rowNumber++}</th>
                         <td>${getMealNamesFromOrder(row.mealList)}</td>
-                        <td>${user.firstName} ${user.lastName}<p>${user.phoneNumber}</p></td>
+                        <td>${role}<p>${user.firstName} ${user.lastName}</p><p>${user.phoneNumber}</p></td>
                         <td>${row.totalPrice}</td>
                         <td>${row.numOfTableOrReceiptPlace}</td>
                         <td>${row.status}</td>
@@ -235,54 +248,54 @@
             $("#btn_add_meal").show();
           });
 
-          $("#btn_addOrder").click(function() {
-              let taken_meals = [];
-
-              let lable_meals = $("#inputMeals").text().split(", ");
-              gb_meals.forEach(function (meal) {
-                for (let element of lable_meals) {
-                  if (element.includes(meal.name)) {
-                    taken_meals.push(meal);
-                    break;
-                  }
-                }
-              })
-
-              let jsonVar = {
-                mealList: taken_meals,
-                numOfTableOrReceiptPlace: $("#inputTableOrReceiptPlace").val()
-              };
-
-              $.ajax({
-                type: "POST",
-                data: JSON.stringify(jsonVar),
-                contentType: "application/json",
-                url:"http://localhost:8080/api/v1/admin/orders/add",
-                success: function (data) {
-                  jsonVar = null;
-                  $("#inputTableOrReceiptPlace").val(null),
-                  $("#btn_closeOrder").click()
-                  $("#loadOrdersBtn").click();
-                }
-              });
-
-            });
-
-            $("#btn_add_meal").click(() => {
-              let lable = $("#inputMeals").text().substr(0, $("#inputMeals").text().length - 2);
-
-              if(lable !== "Meal:[") {
-                $("#inputMeals").text(lable).append(", ").append($("#meal_selector_id option:selected").text()).append(" ]");
-              } else {
-                $("#inputMeals").text(lable).append($("#meal_selector_id option:selected").text()).append(" ]");
-              }
-            });
-
             $(".close_meal_modal").click(function () {
               $("#inputMeals").text("Meal:[ ]");
             });
           });
         }, 2000);
+      });
+
+      $("#btn_addOrder").click(function() {
+        let taken_meals = [];
+
+        let lable_meals = $("#inputMeals").text().split(", ");
+        for (let element of lable_meals) {
+          for (let meal of gb_meals) {
+            if (element.includes(meal.name)) {
+              taken_meals.push(meal);
+              break;
+            }
+          }
+        }
+
+        let jsonVar = {
+          mealList: taken_meals,
+          numOfTableOrReceiptPlace: $("#inputTableOrReceiptPlace").val()
+        };
+
+        $.ajax({
+          type: "POST",
+          data: JSON.stringify(jsonVar),
+          contentType: "application/json",
+          url:"http://localhost:8080/api/v1/admin/orders/add",
+          success: function (data) {
+            jsonVar = null;
+            $("#inputTableOrReceiptPlace").val(null)
+            $("#btn_closeOrder").click()
+            $("#loadOrdersBtn").click();
+          }
+        });
+
+      });
+
+      $("#btn_add_meal").click(() => {
+        let lable = $("#inputMeals").text().substr(0, $("#inputMeals").text().length - 2);
+
+        if(lable !== "Meal:[") {
+          $("#inputMeals").text(lable).append(", ").append($("#meal_selector_id option:selected").text()).append(" ]");
+        } else {
+          $("#inputMeals").text(lable).append($("#meal_selector_id option:selected").text()).append(" ]");
+        }
       });
 
       $("#btn_saveOrder").click(function() {
@@ -338,11 +351,20 @@
               console.log(row);
               if (($("#filteringRequests").val() === row.requestStatus)) {
 
+                let role;
+                if (user.userRoles === "ROLE_ADMIN"){
+                  role = "Administrator"
+                } else if (user.userRoles === "ROLE_WAITER"){
+                  role = "Waiter"
+                } else if(user.userRoles === "ROLE_REGISTERED_USER"){
+                  role = "User"
+                }
+
                 if (row.requestStatus === "CANCELLED" || row.requestStatus === "ACCEPTED") {
                   rows += `<tr>
                         <th scope="row">${rowNumber++}</th>
                         <td>${getMealNamesFromOrder(order.mealList)}</td>
-                        <td>${user.firstName} ${user.lastName}<p>${user.phoneNumber}</p></td>
+                        <td>${role}<p>${user.firstName} ${user.lastName}</p><p>${user.phoneNumber}</p></td>
                         <td>${order.totalPrice}</td>
                         <td>${order.numOfTableOrReceiptPlace}</td>
                         <td>${row.requestStatus}</td>
@@ -353,7 +375,7 @@
                   rows += `<tr>
                         <th scope="row">${rowNumber++}</th>
                         <td>${getMealNamesFromOrder(order.mealList)}</td>
-                        <td>${user.firstName} ${user.lastName}<p>${user.phoneNumber}</p></td>
+                        <td>${role}<p>${user.firstName} ${user.lastName}</p><p>${user.phoneNumber}</p></td>
                         <td>${order.totalPrice}</td>
                         <td>${order.numOfTableOrReceiptPlace}</td>
                         <td>${row.requestStatus}</td>
@@ -366,33 +388,33 @@
 
             $("#requestsList tbody").html(rows);
             $("#loadRequestsBtn").html("Load requests");
-
-            $("#acceptRequestBtn").click(function (event) {
-              let id = $(event.target).attr("value");
-
-              $.ajax({
-                type: "PUT",
-                url:"http://localhost:8080/api/v1/admin/requests/" + id + "/accept",
-                success: function (data) {
-                  $("#loadRequestsBtn").click();
-                }
-              });
-            });
-
-            $("#cancelRequestBtn").click(function (event) {
-              let id = $(event.target).attr("value");
-
-              $.ajax({
-                type: "PUT",
-                url:"http://localhost:8080/api/v1/admin/requests/" + id + "/cancel",
-                success: function (data) {
-                  $("#loadRequestsBtn").click();
-                }
-              });
-            });
-
           })
-        })
+        }, 1000)
+      });
+
+
+      $("#acceptRequestBtn").click(function (event) {
+        let id = $(event.target).attr("value");
+
+        $.ajax({
+          type: "PUT",
+          url:"http://localhost:8080/api/v1/admin/requests/" + id + "/accept",
+          success: function (data) {
+            $("#loadRequestsBtn").click();
+          }
+        });
+      });
+
+      $("#cancelRequestBtn").click(function (event) {
+        let id = $(event.target).attr("value");
+
+        $.ajax({
+          type: "PUT",
+          url:"http://localhost:8080/api/v1/admin/requests/" + id + "/cancel",
+          success: function (data) {
+            $("#loadRequestsBtn").click();
+          }
+        });
       });
 
       function getMealNamesFromOrder(mealList) {
@@ -419,9 +441,6 @@
       <li class="nav-item" role="presentation">
         <button class="nav-link" id="requests-tab" data-bs-toggle="tab" data-bs-target="#requests" type="button" role="tab" aria-controls="requests" aria-selected="false">Requests</button>
       </li>
-      <li class="nav-item justify-content-end" role="presentation">
-        <button class="nav-link" id="requests2-tab" data-bs-toggle="tab" data-bs-target="#requests" type="button" role="tab" aria-controls="requests" aria-selected="false">Requests</button>
-      </li>
   </ul>
 
     <div class="tab-content" id="myTabContent">
@@ -434,7 +453,7 @@
             <select id="filteringUsers" class="form-select filter-users-select">
               <option value="ROLE_ADMIN">Administrator</option>
               <option value="ROLE_WAITER">Waiter</option>
-              <option value="ROLE_USER">User</option>
+              <option value="ROLE_REGISTERED_USER">User</option>
             </select>
           </div>
 
