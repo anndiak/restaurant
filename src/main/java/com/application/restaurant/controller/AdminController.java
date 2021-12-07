@@ -144,15 +144,16 @@ public class AdminController {
         request.setRequestStatus(RequestStatus.ACCEPTED);
         requestRepository.saveRequest(request);
 
+        orderRepository.addOrder(request.getOrder());
         return new ResponseEntity<>(request,HttpStatus.OK);
     }
 
-    @PutMapping("/requests/{request_id}/cancel")
-    public ResponseEntity<Request> cancelOrderRequest(@PathVariable("request_id") String request_id){
-        if(request_id == null ){
+    @PutMapping("/requests/{id}/cancel")
+    public ResponseEntity<Request> cancelOrderRequest(@PathVariable("id") String id){
+        if(id == null ){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        Request request = requestRepository.getRequestById(request_id);
+        Request request = requestRepository.getRequestById(id);
 
         if(request == null){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

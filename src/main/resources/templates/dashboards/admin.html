@@ -66,6 +66,7 @@
 
             $(".user-edit-btn").click((event) =>{
 
+              $('#modal_title_users').text("Edit user");
               $("#inputPassword").hide();
               $("#inputStateRoles").hide();
               $("#btn_add").hide();
@@ -120,6 +121,7 @@
       });
 
       $("#addUsersBtn").click(() => {
+        $('#modal_title_users').text("Add user")
         $("#btn_save").hide();
         $("#inputPassword").show();
         $("#inputStateRoles").show();
@@ -176,8 +178,6 @@
         $('.meal_selector').html(options);
       });
 
-      $("#loadUsersBtn").click();
-
       $("#loadOrdersBtn").click(() => {
         $("#loadOrdersBtn").html("<span class=\"spinner-border spinner-border-sm\" role=\"status\" aria-hidden=\"true\"></span>Loading...")
         setTimeout(() => {
@@ -220,7 +220,7 @@
             $("#loadOrdersBtn").html("Load orders");
 
           $(".order-edit-btn").click((event) =>{
-
+            $('#modal_title_orders').text("Edit order");
             $("#btn_add_meal").hide();
             $("#btn_addOrder").hide();
             $("#inputMeals").hide();
@@ -239,6 +239,7 @@
           });
 
           $(".open_modal_add_order").click(function () {
+            $('#modal_title_users').text("Add order")
             $("#btn_saveOrder").hide();
             $("#inputOrderStatus").hide();
 
@@ -348,7 +349,6 @@
               let user = gbmap.get(row.userId);
               let order = row.order;
 
-              console.log(row);
               if (($("#filteringRequests").val() === row.requestStatus)) {
 
                 let role;
@@ -388,33 +388,32 @@
 
             $("#requestsList tbody").html(rows);
             $("#loadRequestsBtn").html("Load requests");
+
+            $("#acceptRequestBtn").click(function (event) {
+              let id = $(event.target).attr("value");
+
+              $.ajax({
+                type: "PUT",
+                url:"http://localhost:8080/api/v1/admin/requests/" + id + "/accept",
+                success: function (data) {
+                  $("#loadRequestsBtn").click();
+                }
+              });
+            });
+
+            $("#cancelRequestBtn").click(function (event) {
+              let id = $(event.target).attr("value");
+
+              $.ajax({
+                type: "PUT",
+                url:"http://localhost:8080/api/v1/admin/requests/" + id + "/cancel",
+                success: function (data) {
+                  $("#loadRequestsBtn").click();
+                }
+              });
+            });
           })
         }, 1000)
-      });
-
-
-      $("#acceptRequestBtn").click(function (event) {
-        let id = $(event.target).attr("value");
-
-        $.ajax({
-          type: "PUT",
-          url:"http://localhost:8080/api/v1/admin/requests/" + id + "/accept",
-          success: function (data) {
-            $("#loadRequestsBtn").click();
-          }
-        });
-      });
-
-      $("#cancelRequestBtn").click(function (event) {
-        let id = $(event.target).attr("value");
-
-        $.ajax({
-          type: "PUT",
-          url:"http://localhost:8080/api/v1/admin/requests/" + id + "/cancel",
-          success: function (data) {
-            $("#loadRequestsBtn").click();
-          }
-        });
       });
 
       function getMealNamesFromOrder(mealList) {
@@ -479,7 +478,7 @@
           <div class="modal-dialog">
             <div class="modal-content">
               <div class="modal-header">
-                <h5 class="modal-title">Modal title</h5>
+                <h5 class="modal-title" id="modal_title_users">Modal title</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body">
@@ -565,7 +564,7 @@
           <div class="modal-dialog">
             <div class="modal-content">
               <div class="modal-header">
-                <h5 class="modal-title">Modal title</h5>
+                <h5 class="modal-title" id="modal_title_orders">Modal title</h5>
                 <button type="button" class="btn-close close_meal_modal" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body">

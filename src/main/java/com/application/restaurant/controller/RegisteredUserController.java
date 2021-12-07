@@ -1,10 +1,13 @@
 package com.application.restaurant.controller;
 
+import com.application.restaurant.dao.MealRepository;
 import com.application.restaurant.dao.OrderRepository;
 import com.application.restaurant.dao.RequestRepository;
 import com.application.restaurant.dao.UserRepository;
 import com.application.restaurant.model.*;
+import com.application.restaurant.model.dto.AddOrderDto;
 import com.application.restaurant.service.OrderService;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -16,14 +19,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping(path = "api/v1/registered_user")
 public class RegisteredUserController {
-
-    @Autowired
-    private UserRepository userRepository;
 
     @Autowired
     private RequestRepository requestRepository;
@@ -34,12 +33,15 @@ public class RegisteredUserController {
     @Autowired
     private OrderService orderService;
 
+    @Autowired
+    private MealRepository mealRepository;
 
+
+    @GetMapping("/me")
     public User getAuthenticatedUser(){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         return (User)auth.getPrincipal();
     }
-
 
     @RequestMapping("/homepage")
     public ModelAndView homePage() {
@@ -48,7 +50,7 @@ public class RegisteredUserController {
 
     @GetMapping("/orders")
     public ResponseEntity<List<Order>> getAllOrders() {
-        Query query = Query.query(Criteria.where("id").is(getAuthenticatedUser().getId()));
+        Query query = Query.query(Criteria.where("userId").is(getAuthenticatedUser().getId()));
         return new ResponseEntity<>(orderRepository.getOrdersByFilter(query), HttpStatus.OK);
     }
 
@@ -64,15 +66,33 @@ public class RegisteredUserController {
         return new ResponseEntity<>(orderRepository.getOrderById(order_id),HttpStatus.OK);
     }
 
-    @PostMapping("/request/new")
-    public ResponseEntity<Request> makeOrderRequest(@RequestBody Order order) {
-        order.setTotalPrice(orderService.countOrderPrice(order.getMealList()));
+    @GetMapping("/requests")
+    public ResponseEntity<List<Request>> getAllRequests() {
+        Query query = Query.query(Criteria.where("userId").is(getAuthenticatedUser().getId()));
+        return new ResponseEntity<>(requestRepository.getRequestsByFilter(query), HttpStatus.OK);
+    }
+
+    @PostMapping("/requests/add")
+    public ResponseEntity<Request> makeOrderRequest(@RequestBody AddOrderDto addOrderDto) {
+        Order order = new Order();
+        order.setUserId(getAuthenticatedUser().getId());
+        order.setMealList(addOrderDto.getMealList());
+        order.setNumOfTableOrReceiptPlace(addOrderDto.getNumOfTableOrReceiptPlace());
+        order.setTotalPrice(orderService.countOrderPrice(addOrderDto.getMealList()));
+        order.setStatus(OrderStatus.IN_PROGRESS);
         Request request = new Request();
-        request.setId(UUID.randomUUID().toString());
         request.setUserId(getAuthenticatedUser().getId());
         request.setOrder(order);
         request.setRequestStatus(RequestStatus.IN_PROGRESS);
         requestRepository.createRequest(request);
         return new ResponseEntity<>(request, HttpStatus.OK);
+    }
+
+    @GetMapping("/meals")
+    public ResponseEntity<List<Meal>> getAllMeals(){ return new ResponseEntity<>(mealRepository.getAllMeals(), HttpStatus.OK);}
+
+    @PostMapping("/meals/add")
+    public ResponseEntity<Meal> addMealToSystem(@RequestBody Meal meal) {
+        return new ResponseEntity<>(mealRepository.creatMeal(meal), HttpStatus.OK);
     }
 }

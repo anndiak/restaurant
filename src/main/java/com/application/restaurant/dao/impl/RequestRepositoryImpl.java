@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Component;
 
+import org.springframework.data.mongodb.core.query.Query;
 import java.util.List;
 
 @Component
@@ -22,6 +23,11 @@ public class RequestRepositoryImpl implements RequestRepository {
     @Override
     public Request getRequestById(String id) {
         return mt.findById(id, Request.class);
+    }
+
+    @Override
+    public List<Request> getRequestsByFilter(Query query) {
+        return mt.find(query, Request.class);
     }
 
     @Override

@@ -144,6 +144,7 @@
                         $("#loadOrdersBtn").html("Load orders");
 
                         $(".order-edit-btn").click((event) =>{
+                            $("#modal_title_orders").text("Edit order")
                             $("#btn_addOrder").hide();
                             $("#inputMeals").hide();
                             $("#meal_selector_id").hide();
@@ -162,6 +163,7 @@
                         });
 
                         $(".open_modal_add_order").click(function () {
+                            $("#modal_title_orders").text("Add order")
                             $("#btn_saveOrder").hide();
                             $("#inputOrderStatus").hide();
 
@@ -328,7 +330,7 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Modal title</h5>
+                        <h5 class="modal-title" id="modal_title_orders">Modal title</h5>
                         <button type="button" class="btn-close close_meal_modal" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
@@ -372,6 +374,5 @@
         </div>
     </div>
     </div>
-</div>
 </body>
 </html>
