@@ -5,6 +5,8 @@ import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @Document("requests")
@@ -17,4 +19,8 @@ public class Request {
     private  Order order;
 
     private RequestStatus requestStatus;
+
+    private LocalDateTime statusUpdatedAt = LocalDateTime.now();
+
+    private LocalDateTime createdAt = LocalDateTime.now();
 }

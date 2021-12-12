@@ -41,7 +41,7 @@ public class RequestRepositoryImpl implements RequestRepository {
     }
 
     @Override
-    public void createRequest(Request request) {
-        mt.insert(request);
+    public Request createRequest(Request request) {
+        return mt.insert(request);
     }
 }

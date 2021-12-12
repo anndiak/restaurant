@@ -144,29 +144,46 @@
 
     $( document ).ready(function() {
 
+      $("#loadUsersBtn").click();
+      $("#loadOrdersBtn").click();
+
       $("#loadRequestsBtn").click(() => {
         $("#loadRequestsBtn").html("<span class=\"spinner-border spinner-border-sm\" role=\"status\" aria-hidden=\"true\"></span>Loading...")
         setTimeout(() => {
           $.get("/api/v1/registered_user/requests", function (data) {
             console.log(data);
-            let rows = "";
+            $("#requestsList tbody").html("");
             let rowNumber = 1;
             data.forEach(function (row) {
               let order = row.order;
 
 //              if (($("#filteringRequests").val() === row.requestStatus)) {
+              if(row.requestStatus === "ACCEPTED") {
+                $.get("/pay?request_id=" + row.id, function (button_form) {
 
-                  rows += `<tr>
+                  let r = `<tr>
                         <th scope="row">${rowNumber++}</th>
                         <td>${getMealNamesFromOrder(order.mealList)}</td>
                         <td>${order.totalPrice}</td>
                         <td>${order.numOfTableOrReceiptPlace}</td>
                         <td>${row.requestStatus}</td>
+                        <td>${button_form}</td>
                       </tr>`;
-//              }
+                  $("#requestsList tbody").append(r);
+                });
+              } else {
+                let b = `<tr>
+                        <th scope="row">${rowNumber++}</th>
+                        <td>${getMealNamesFromOrder(order.mealList)}</td>
+                        <td>${order.totalPrice}</td>
+                        <td>${order.numOfTableOrReceiptPlace}</td>
+                        <td>${row.requestStatus}</td>
+                        <td></td>
+                      </tr>`;
+                $("#requestsList tbody").append(b);
+              }
             });
 
-            $("#requestsList tbody").html(rows);
             $("#loadRequestsBtn").html("Load requests");
           })
         }, 1000)
@@ -279,6 +296,7 @@
         <th scope="col">Total price</th>
         <th scope="col">Table or receipt place</th>
         <th scope="col">Request status</th>
+        <th scope="col">Payment option</th>
       </tr>
       </thead>
       <tbody>

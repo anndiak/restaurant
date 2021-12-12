@@ -17,5 +17,5 @@ public interface RequestRepository {
 
     Request saveRequest(Request request);
 
-    void createRequest(Request request);
+    Request createRequest(Request request);
 }

@@ -389,24 +389,24 @@
             $("#requestsList tbody").html(rows);
             $("#loadRequestsBtn").html("Load requests");
 
-            $("#acceptRequestBtn").click(function (event) {
+            $(".request-accept-btn").click(function (event) {
               let id = $(event.target).attr("value");
 
               $.ajax({
                 type: "PUT",
-                url:"http://localhost:8080/api/v1/admin/requests/" + id + "/accept",
+                url:"/api/v1/admin/requests/" + id + "/accept",
                 success: function (data) {
                   $("#loadRequestsBtn").click();
                 }
               });
             });
 
-            $("#cancelRequestBtn").click(function (event) {
+            $(".request-cancel-btn").click(function (event) {
               let id = $(event.target).attr("value");
 
               $.ajax({
                 type: "PUT",
-                url:"http://localhost:8080/api/v1/admin/requests/" + id + "/cancel",
+                url:"/api/v1/admin/requests/" + id + "/cancel",
                 success: function (data) {
                   $("#loadRequestsBtn").click();
                 }

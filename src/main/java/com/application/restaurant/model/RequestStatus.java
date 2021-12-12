@@ -1,3 +1,3 @@
 package com.application.restaurant.model;
 
-public enum RequestStatus {ACCEPTED, IN_PROGRESS, CANCELLED}
+public enum RequestStatus {PAID, ACCEPTED, IN_PROGRESS, CANCELLED}

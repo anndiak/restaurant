@@ -18,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -84,8 +85,8 @@ public class RegisteredUserController {
         request.setUserId(getAuthenticatedUser().getId());
         request.setOrder(order);
         request.setRequestStatus(RequestStatus.IN_PROGRESS);
-        requestRepository.createRequest(request);
-        return new ResponseEntity<>(request, HttpStatus.OK);
+        request.setStatusUpdatedAt(LocalDateTime.now());
+        return new ResponseEntity<>(requestRepository.createRequest(request), HttpStatus.OK);
     }
 
     @GetMapping("/meals")
