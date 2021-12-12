@@ -1,7 +1,6 @@
 package com.application.restaurant.configuration;
 
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
@@ -22,8 +21,7 @@ public class SpringMVCConfiguration implements WebMvcConfigurer {
 
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
-        // TODO Auto-generated method stub
-        // Register to visit / login and turn to page-page-login.html
-        registry.addViewController("/login").setViewName("page-page-login.html");
+        // Register to visit / login and turn to page-login.html
+        registry.addViewController("/login").setViewName("page-login.html");
     }
 }
