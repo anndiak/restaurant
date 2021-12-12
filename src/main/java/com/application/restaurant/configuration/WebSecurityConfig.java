@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -30,16 +31,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .csrf().disable()
                 .authorizeRequests()
-                    .antMatchers("/registration/**").permitAll()
-                    .antMatchers("/confirm/**").permitAll()
-                    .antMatchers("/process_register").permitAll()
-                    .antMatchers("/homepage/**").permitAll()
-                    .antMatchers("/pay").permitAll()
-//                .antMatchers("/api/v*/admin/**").permitAll()
-//                .antMatchers("/api/v*/waiter/**").permitAll()
-                    .antMatchers("/api/v*/admin/**").access("hasRole('ROLE_ADMIN')")
-                    .antMatchers("/api/v*/registered_user/**").access("hasRole('ROLE_REGISTERED_USER')")
-                    .antMatchers("/api/v*/waiter/**").access("hasRole('ROLE_WAITER')")
+                .antMatchers("/resources/**", "/static/**","/templates/**", "/css/**", "/js/**", "/img/**", "/icon/**").permitAll()
+                .antMatchers("/").permitAll()
+                .antMatchers("/article").permitAll()
+                .antMatchers("/api/v*/admin/**").access("hasRole('ROLE_ADMIN')")
+                .antMatchers("/api/v*/registered_user/**").access("hasRole('ROLE_REGISTERED_USER')")
+                .antMatchers("/api/v*/waiter/**").access("hasRole('ROLE_WAITER')")
                 .anyRequest()
                 .authenticated()
                 .and().formLogin()
@@ -47,6 +44,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .and().logout()
                 .logoutUrl("/logout");
+    }
+
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring().antMatchers("/global/**");
     }
 
     @Override
