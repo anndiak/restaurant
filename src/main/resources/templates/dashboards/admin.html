@@ -154,12 +154,19 @@
             $("#inputFirstName").val(null);
             $("#inputLastName").val(null);
             $("#inputPhone").val(null);
-            $("#inputPasswordField").val(null),
+            $("#inputPasswordField").val(null)
             $("#inputStateRolesField").val(null)
             $("#btn_close").click()
             $("#loadUsersBtn").click();
           }
         });
+      });
+      $(".close-user-btn").click(function () {
+        $("#inputEmail").val(null);
+        $("#inputFirstName").val(null);
+        $("#inputLastName").val(null);
+        $("#inputPhone").val(null);
+        $("#inputPasswordField").val(null)
       });
     });
 
@@ -252,6 +259,7 @@
 
             $(".close_meal_modal").click(function () {
               $("#inputMeals").text("Meal:[ ]");
+              $("#inputTableOrReceiptPlace").val(null);
             });
           });
         }, 2000);
@@ -335,6 +343,7 @@
 
 
     $( document ).ready(function() {
+      $("#loadUsersBtn").click();
 
       $("#loadRequestsBtn").click(() => {
         $("#loadRequestsBtn").html("<span class=\"spinner-border spinner-border-sm\" role=\"status\" aria-hidden=\"true\"></span>Loading...")
@@ -430,6 +439,7 @@
 
 
     $( document ).ready(function() {
+      $("#loadOrdersBtn").click();
         var current_meal_id;
         let gb_meals;
 
@@ -544,6 +554,12 @@
             }
           });
         });
+
+      $(".btn-meal-close").click(function () {
+        $("#inputMealName").val(null);
+        $("#inputDescription").val(null);
+        $("#inputPrice").val(0.0);
+      });
     });
   </script>
 </head>
@@ -608,7 +624,7 @@
             <div class="modal-content">
               <div class="modal-header">
                 <h5 class="modal-title" id="modal_title_users">Modal title</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close close-user-btn" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body">
                 <form id="editForm">
@@ -629,7 +645,7 @@
                     </div>
                     <div class="form-group col-md-6">
                       <label for="inputPhone">Phone</label>
-                      <input type="text" class="form-control" id="inputPhone" required minlength="8" maxlength="11"/>
+                      <input type="text" class="form-control" id="inputPhone" required minlength="10" maxlength="13"/>
                     </div>
                     <div class="form-group col-md-6" id="inputPassword">
                       <label for="inputPasswordField">Password</label>
@@ -653,7 +669,7 @@
                 </form>
               </div>
               <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="btn_close">Close</button>
+                <button type="button" class="btn btn-secondary close-user-btn" data-bs-dismiss="modal" id="btn_close">Close</button>
                 <button type="button" class="btn btn-primary" id="btn_save">Save</button>
                 <button type="button" class="btn btn-primary" id="btn_add">Add</button>
               </div>
@@ -791,7 +807,7 @@
             <div class="modal-content">
               <div class="modal-header">
                 <h5 class="modal-title" id="modal_title_meals">Modal title</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close btn-meal-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body">
                 <form id="editFormMeal">
@@ -814,7 +830,7 @@
                 </form>
               </div>
               <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="btn_closeMeal">Close</button>
+                <button type="button" class="btn btn-secondary btn-meal-close" data-bs-dismiss="modal" id="btn_closeMeal">Close</button>
                 <button type="button" class="btn btn-primary" id="btn_saveMeal">Save</button>
                 <button type="button" class="btn btn-primary" id="btn_addMeal">Add</button>
               </div>
