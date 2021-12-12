@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html"
+      xmlns:justify-content="http://www.w3.org/1999/xhtml">
 <head>
   <meta charset="ISO-8859-1">
   <title>Admin</title>
@@ -239,7 +240,7 @@
           });
 
           $(".open_modal_add_order").click(function () {
-            $('#modal_title_users').text("Add order")
+            $('#modal_title_orders').text("Add order")
             $("#btn_saveOrder").hide();
             $("#inputOrderStatus").hide();
 
@@ -286,7 +287,6 @@
             $("#loadOrdersBtn").click();
           }
         });
-
       });
 
       $("#btn_add_meal").click(() => {
@@ -427,20 +427,149 @@
         return mealNameList;
       }
     });
+
+
+    $( document ).ready(function() {
+        var current_meal_id;
+        let gb_meals;
+
+        $("#loadMealsBtn").click(() => {
+          $("#loadMealsBtn").html("<span class=\"spinner-border spinner-border-sm\" role=\"status\" aria-hidden=\"true\"></span>Loading...")
+          setTimeout(() => {
+            $.get("/api/v1/admin/meals", function (data) {
+              console.log(data);
+              let rows = "";
+              let rowNumber = 1;
+              gb_meals = new Map();
+              data.forEach(function (row) {
+                current_meal_id = row.id;
+                gb_meals.set(row.id, row)
+
+                  rows += `<tr>
+                        <th scope="row">${rowNumber++}</th>
+                        <td>${row.name}</td>
+                        <td>${row.description}</td>
+                        <td>${row.price}</td>
+                        <td><button type='button' class='btn btn-danger meal-remove-btn' value="${row.id}">Delete</button></td>
+                        <td><button type="button" class="btn btn-primary meal-edit-btn" data-bs-toggle="modal" data-bs-target="#save_MealModal" value="${row.id}">Edit</button></td>
+                      </tr>`;
+              });
+              $("#mealList tbody").html(rows);
+              $("#loadMealsBtn").html("Load meals");
+
+              $(".meal-remove-btn").click((event) =>{
+                let id = $(event.target).attr("value");
+                $.ajax({
+                  type:"DELETE",
+                  url:"http://localhost:8080/api/v1/admin/meals/" + id,
+                  success: function(data){
+                    $("#loadMealsBtn").click();
+                  }
+                });
+              });
+
+              $(".meal-edit-btn").click((event) =>{
+
+                $('#modal_title_meals').text("Edit meal");
+                $("#btn_addMeal").hide();
+                $("#btn_saveMeal").show();
+
+                let id = $(event.target).attr("value");
+                current_meal_id = id;
+                let meal = gb_meals.get(id);
+
+                $("#inputMealName").val(meal.name);
+                $("#inputDescription").val(meal.description);
+                $("#inputPrice").val(meal.price);
+              });
+            });
+          }, 1000);
+        })
+
+        $("#btn_saveMeal").click(function() {
+
+          let price = 0.0;
+          if ($.isNumeric($("#inputPrice").val()) === true) {price = $("#inputPrice").val();}
+
+          let jsonVar = {
+            name: $("#inputMealName").val(),
+            description: $("#inputDescription").val(),
+            price: price
+          };
+
+          $.ajax({
+            type: "PUT",
+            data: JSON.stringify(jsonVar),
+            contentType: "application/json",
+            url:"http://localhost:8080/api/v1/admin/meals/" + current_meal_id,
+            success: function (data) {
+              jsonVar = null;
+              $("#inputMealName").val(null);
+              $("#inputDescription").val(null);
+              $("#inputPrice").val(0.0);
+              $("#btn_closeMeal").click()
+              $("#loadMealsBtn").click();
+            }
+          });
+        });
+
+        $("#addMealsBtn").click(() => {
+          $('#modal_title_meals').text("Add meal")
+          $("#btn_saveMeal").hide();
+          $("#btn_addMeal").show();
+        });
+        $("#btn_addMeal").click(function() {
+
+          let price = 0.0;
+          if ($.isNumeric($("#inputPrice").val()) === true) {price = $("#inputPrice").val();}
+
+          let jsonVar = {
+            name: $("#inputMealName").val(),
+            description: $("#inputDescription").val(),
+            price: price
+          };
+
+          $.ajax({
+            type: "POST",
+            data: JSON.stringify(jsonVar),
+            contentType: "application/json",
+            url:"http://localhost:8080/api/v1/admin/meals/add",
+            success: function (data) {
+              jsonVar = null;
+              $("#inputMealName").val(null);
+              $("#inputDescription").val(null);
+              $("#inputPrice").val(0.0);
+              $("#btn_closeMeal").click()
+              $("#loadMealsBtn").click();
+            }
+          });
+        });
+    });
   </script>
 </head>
+<div>
   <body>
-  <ul class="nav nav-tabs navbar-dark bg-dark" id="myTab" role="tablist">
-      <li class="nav-item" role="presentation">
-        <button class="nav-link active" id="users-tab" data-bs-toggle="tab" data-bs-target="#users" type="button" role="tab" aria-controls="users" aria-selected="true">Users</button>
-      </li>
-      <li class="nav-item" role="presentation">
-        <button class="nav-link" id="orders-tab" data-bs-toggle="tab" data-bs-target="#orders" type="button" role="tab" aria-controls="orders" aria-selected="false">Orders</button>
-      </li>
-      <li class="nav-item" role="presentation">
-        <button class="nav-link" id="requests-tab" data-bs-toggle="tab" data-bs-target="#requests" type="button" role="tab" aria-controls="requests" aria-selected="false">Requests</button>
-      </li>
-  </ul>
+  <div style="display: flex;justify-content: space-between" class="bg-dark">
+    <div>
+        <ul class="nav nav-tabs navbar-dark bg-dark" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active" id="users-tab" data-bs-toggle="tab" data-bs-target="#users" type="button" role="tab" aria-controls="users" aria-selected="true">Users</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="orders-tab" data-bs-toggle="tab" data-bs-target="#orders" type="button" role="tab" aria-controls="orders" aria-selected="false">Orders</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="requests-tab" data-bs-toggle="tab" data-bs-target="#requests" type="button" role="tab" aria-controls="requests" aria-selected="false">Requests</button>
+            </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="meals-tab" data-bs-toggle="tab" data-bs-target="#meals" type="button" role="tab" aria-controls="meals" aria-selected="false">Meals</button>
+          </li>
+        </ul>
+    </div>
+    <div>
+      <a href="/logout" class="btn btn-success" role="button" aria-disabled="true" style="margin-top: 2px;margin-right: 3px">Sigh out</a>
+    </div>
+  </div>
 
     <div class="tab-content" id="myTabContent">
       <div class="tab-pane fade show active" id="users" role="tabpanel" aria-labelledby="users-tab">
@@ -637,6 +766,63 @@
         </table>
 
       </div>
-    </div>
+
+      <div class="tab-pane fade" id="meals" role="tabpanel" aria-labelledby="meals-tab">
+
+        <button id="loadMealsBtn" type="button" class="btn btn-primary">Load meals</button>
+        <button id="addMealsBtn" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#save_MealModal">Add meal</button>
+
+        <table id="mealList" class="table">
+          <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Meal name</th>
+            <th scope="col">Description</th>
+            <th scope="col">Price</th>
+            <th scope="col">Delete</th>
+            <th scope="col">Edit</th>
+          </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+        <div class="modal" tabindex="-1" id="save_MealModal">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="modal_title_meals">Modal title</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <form id="editFormMeal">
+                  <div class="form-row">
+                    <div class="form-group col-md-6">
+                      <label for="inputMealName">Meal name:</label>
+                      <input type="text" class="form-control" id="inputMealName"/>
+                    </div>
+                    <div class="form-group col-md-6">
+                      <label for="inputDescription">Description:</label>
+                      <input type="text" class="form-control" id="inputDescription"/>
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group col-md-6">
+                      <label for="inputPrice">Price:</label>
+                      <input type="text" class="form-control" id="inputPrice"/>
+                    </div>
+                  </div>
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="btn_closeMeal">Close</button>
+                <button type="button" class="btn btn-primary" id="btn_saveMeal">Save</button>
+                <button type="button" class="btn btn-primary" id="btn_addMeal">Add</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      </div>
   </body>
+</div>
 </html>

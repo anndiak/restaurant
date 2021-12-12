@@ -234,6 +234,25 @@ public class AdminController {
         return new ResponseEntity<>(mealRepository.creatMeal(meal), HttpStatus.OK);
     }
 
+    @DeleteMapping("/meals/{id}")
+    public void addMealToSystem(@PathVariable("id") String id) {
+       mealRepository.deleteMeal(id);
+    }
+
+    @PutMapping("/meals/{id}")
+    public ResponseEntity<Meal> changeMeal(@Valid @RequestBody Meal meal, @PathVariable("id") String id) {
+        if(id == null || meal == null ) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        if(mealRepository.getMealById(id) == null){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        Meal changedMeal = updateMealFields(id, meal);
+        return new ResponseEntity<>(mealRepository.updateMeal(changedMeal),HttpStatus.OK);
+    }
+
     private User updateUserFields(String id, User newUser){
         User user = userRepository.findUserById(id);
         user.setFirstName(newUser.getFirstName());
@@ -249,5 +268,13 @@ public class AdminController {
         order.setNumOfTableOrReceiptPlace(orderDto.getNumOfTableOrReceiptPlace());
         order.setStatus(orderDto.getStatus());
         return order;
+    }
+
+    private Meal updateMealFields(String id, Meal newMeal) {
+        Meal meal = mealRepository.getMealById(id);
+        meal.setName(newMeal.getName());
+        meal.setDescription(newMeal.getDescription());
+        meal.setPrice(newMeal.getPrice());
+        return meal;
     }
 }
