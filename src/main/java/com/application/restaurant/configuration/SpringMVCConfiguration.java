@@ -23,5 +23,4 @@ public class SpringMVCConfiguration implements WebMvcConfigurer {
     public void addViewControllers(ViewControllerRegistry registry) {
         // Register to visit / login and turn to page-login.html
         registry.addViewController("/login").setViewName("page-login.html");
-    }
 }
