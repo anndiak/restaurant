@@ -12,7 +12,7 @@ public class LoginController {
     @RequestMapping("/login")
     public String login(Model model) {
         model.addAttribute("loginRequest", new LoginRequest());
-        return "login";
+        return "page-login";
     }
 
     @RequestMapping("/waiterDashboard")

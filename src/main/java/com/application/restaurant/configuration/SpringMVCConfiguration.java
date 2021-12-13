@@ -23,7 +23,7 @@ public class SpringMVCConfiguration implements WebMvcConfigurer {
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
         // TODO Auto-generated method stub
-        // Register to visit / login and turn to page-login.html
-        registry.addViewController("/login").setViewName("page-login.html");
+        // Register to visit / login and turn to page-page-login.html
+        registry.addViewController("/login").setViewName("page-page-login.html");
     }
 }
