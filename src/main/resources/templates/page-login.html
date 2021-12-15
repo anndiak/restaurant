@@ -45,31 +45,30 @@
         </div>
         <div class="col-md-6 p-0 h-md-100 loginarea">
             <div class="d-md-flex align-items-center h-md-100 p-3 justify-content-center">
-                <form name="f" th:action="@{/login}" method="post">
-                    <fieldset>
-                        <legend style="color: #28a745">You have registered successfully!</legend>
-                        <legend>Please Login</legend>
-                        <div th:if="${param.error}" class="alert alert-error">
-                            Invalid username and password.
-                        </div>
-                        <div th:if="${param.logout}" class="alert alert-success">
-                            You have been logged out.
-                        </div>
-                        <div class="form-group">
-                            <input type="text" class="form-control"  id="username" name="username" aria-describedby="emailHelp"
-                                   placeholder="E-mail" required="">
-                        </div>
+    <form name="f" th:action="@{/login}" method="post">
+        <fieldset>
+            <legend>Please Login</legend>
+            <div th:if="${param.error}" class="alert alert-error">
+                Invalid username and password.
+            </div>
+            <div th:if="${param.logout}" class="alert alert-success">
+                You have been logged out.
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-control"  id="username" name="username" aria-describedby="emailHelp"
+                       placeholder="E-mail" required="">
+            </div>
 
-                        <div class="form-group">
-                            <input type="password" class="form-control" id="password" name="password"
-                                   placeholder="Password" required="">
-                        </div>
+            <div class="form-group">
+                <input type="password" class="form-control" id="password" name="password"
+                       placeholder="Password" required="">
+            </div>
 
-                        <div class="form-actions">
-                            <button type="submit" class="btn btn-dark btn-round btn-block">Sign in</button> <small class="d-block mt-4 text-center"><a class="text-gray" href="#">Forgot your password?</a></small>
-                        </div>
-                    </fieldset>
-                </form>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-dark btn-round btn-block">Sign in</button> <small class="d-block mt-4 text-center"><a class="text-gray" href="#">Forgot your password?</a></small>
+            </div>
+        </fieldset>
+    </form>
             </div>
         </div>
     </div>

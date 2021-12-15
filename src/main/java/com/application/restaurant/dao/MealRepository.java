@@ -10,6 +10,8 @@ public interface MealRepository {
 
     Meal getMealById(String id);
 
+    List<Meal> getMealByType(String type);
+
     Meal creatMeal(Meal meal);
 
     Meal updateMeal(Meal meal);
