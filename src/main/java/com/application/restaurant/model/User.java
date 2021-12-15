@@ -25,6 +25,7 @@ public class User implements UserDetails {
     private String password;
     private String phoneNumber;
     private UserRoles userRoles;
+    private String resetPasswordToken;
     private Boolean locked = false;
     private Boolean enabled = false;
 

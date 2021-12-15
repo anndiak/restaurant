@@ -38,8 +38,6 @@ public class UserService implements UserDetailsService {
         userRepository.deleteUser(user.getId());
     }
 
-    public List<User> getAllUsers() {return userRepository.findAllUsers();}
-
     public String sighUpUser(User user) {
        boolean userExists = userRepository
                .findByEmail(user.getEmail())
@@ -71,6 +69,29 @@ public class UserService implements UserDetailsService {
 
     public void enableUser(String email) {
         userRepository.findByEmail(email).ifPresent(u -> userRepository.update(u.enable()));
+    }
+
+    public void updateResetPasswordToken(String token, String email) throws UsernameNotFoundException {
+        User user = userRepository.findUserEmail(email);
+        if (user != null) {
+            user.setResetPasswordToken(token);
+            userRepository.update(user);
+        } else {
+            throw new UsernameNotFoundException("Could not find any user with the email " + email);
+        }
+    }
+
+    public User getByResetPasswordToken(String token) {
+        return userRepository.findUserByResetPasswordToken(token);
+    }
+
+    public void updatePassword(User user, String newPassword) {
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String encodedPassword = passwordEncoder.encode(newPassword);
+        user.setPassword(encodedPassword);
+
+        user.setResetPasswordToken(null);
+        userRepository.update(user);
     }
 
 }

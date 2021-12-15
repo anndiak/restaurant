@@ -7,6 +7,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,7 +17,6 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Autowired
     private MongoTemplate mt;
-
 
     @Override
     public User create(User user) { return mt.insert(user); }
@@ -38,6 +38,12 @@ public class UserRepositoryImpl implements UserRepository {
     public User findUserEmail(String email) {
         Query query = Query.query(Criteria.where("email").is(email));
         return mt.findOne(query, User.class);
+    }
+
+    @Override
+    public User findUserByResetPasswordToken(String resetPasswordToken) {
+            Query query = Query.query(Criteria.where("resetPasswordToken").is(resetPasswordToken));
+            return mt.findOne(query, User.class);
     }
 
     @Override

@@ -14,6 +14,8 @@ public interface UserRepository{
 
     User findUserEmail(String email);
 
+    User findUserByResetPasswordToken(String resetPasswordToken);
+
     List<User> findAllUsersByFilter(Query query);
 
     List<User> findAllUsers();

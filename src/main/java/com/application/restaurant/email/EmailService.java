@@ -42,7 +42,7 @@ public class EmailService implements EmailSender{
         try {
 
             Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress("ann271101"));
+            message.setFrom(new InternetAddress("Bistrot Francais Administration"));
             message.setRecipients(
                     Message.RecipientType.TO,
                     InternetAddress.parse(to)
