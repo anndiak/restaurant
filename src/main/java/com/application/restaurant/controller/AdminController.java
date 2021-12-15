@@ -8,7 +8,6 @@ import com.application.restaurant.model.*;
 import com.application.restaurant.model.dto.AddOrderDto;
 import com.application.restaurant.model.dto.ChangeOrderDto;
 import com.application.restaurant.service.OrderService;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,34 +46,6 @@ public class AdminController {
     public User getAuthenticatedUser(){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         return (User)auth.getPrincipal();
-    }
-
-    @PostMapping("/test")
-    public void test() {
-        Meal meal1 = new Meal();
-        meal1.setName("Toast with nut");
-        meal1.setDescription("2 toasts, nut pasta");
-        meal1.setPrice(56.30);
-
-        Meal meal2 = new Meal();
-        meal2.setName("Fri eggs");
-        meal2.setDescription("2 chicken eggs, salt");
-        meal2.setPrice(34.70);
-
-        Meal meal3 = new Meal();
-        meal3.setName("Napoleon");
-        meal3.setDescription("smetana, korz");
-        meal3.setPrice(134.50);
-
-        mealRepository.creatMeal(meal1);
-        mealRepository.creatMeal(meal2);
-        mealRepository.creatMeal(meal3);
-//        Order order = orderRepository.getOrderById("61acd12d4a1a64087dee6221");
-//        Request request = new Request();
-//        request.setUserId(order.getUserId());
-//        request.setOrder(order);
-//        request.setRequestStatus(RequestStatus.IN_PROGRESS);
-//        requestRepository.createRequest(request);
     }
 
     @RequestMapping("/homepage")
@@ -275,6 +246,8 @@ public class AdminController {
         meal.setName(newMeal.getName());
         meal.setDescription(newMeal.getDescription());
         meal.setPrice(newMeal.getPrice());
+        meal.setMealType(newMeal.getMealType());
+        meal.setImage(newMeal.getImage());
         return meal;
     }
 }

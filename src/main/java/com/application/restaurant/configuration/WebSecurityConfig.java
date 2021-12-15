@@ -1,6 +1,5 @@
 package com.application.restaurant.configuration;
 
-import com.application.restaurant.model.UserRoles;
 import com.application.restaurant.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,19 +29,21 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .csrf().disable()
                 .authorizeRequests()
-                    .antMatchers("/registration/**").permitAll()
-                    .antMatchers("/confirm/**").permitAll()
-                    .antMatchers("/process_register").permitAll()
-                    .antMatchers("/homepage/**").permitAll()
-                    .antMatchers("/pay").permitAll()
-//                .antMatchers("/api/v*/admin/**").permitAll()
-//                .antMatchers("/api/v*/waiter/**").permitAll()
-                    .antMatchers("/api/v*/admin/**").access("hasRole('ROLE_ADMIN')")
-                    .antMatchers("/api/v*/registered_user/**").access("hasRole('ROLE_REGISTERED_USER')")
-                    .antMatchers("/api/v*/waiter/**").access("hasRole('ROLE_WAITER')")
+                .antMatchers("/resources/**", "/static/**","/templates/**", "/css/**", "/js/**", "/img/**", "/icon/**").permitAll()
+                .antMatchers("/").permitAll()
+                .antMatchers("/article").permitAll()
+                .antMatchers("/registration/**").permitAll()
+                .antMatchers("/confirm/**").permitAll()
+                .antMatchers("/change_password/**").permitAll()
+                .antMatchers("/process_register").permitAll()
+                .antMatchers("/pay").permitAll()
+                .antMatchers("/api/v*/admin/**").access("hasRole('ROLE_ADMIN')")
+                .antMatchers("/api/v*/registered_user/**").access("hasRole('ROLE_REGISTERED_USER')")
+                .antMatchers("/api/v*/waiter/**").access("hasRole('ROLE_WAITER')")
                 .anyRequest()
                 .authenticated()
                 .and().formLogin()
+                .loginPage("/login")
                 .successHandler(successHandler)
                 .permitAll()
                 .and().logout()

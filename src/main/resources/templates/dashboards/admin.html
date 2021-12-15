@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html"
-      xmlns:justify-content="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 <head>
   <meta charset="ISO-8859-1">
   <title>Admin</title>
@@ -10,6 +9,7 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script type="text/javascript">
     var gbmap;
+    var current_image;
     $( document ).ready(function() {
       var current_user_id;
 
@@ -439,7 +439,6 @@
 
 
     $( document ).ready(function() {
-      $("#loadOrdersBtn").click();
         var current_meal_id;
         let gb_meals;
 
@@ -460,6 +459,7 @@
                         <td>${row.name}</td>
                         <td>${row.description}</td>
                         <td>${row.price}</td>
+                        <td>${row.mealType}</td>
                         <td><button type='button' class='btn btn-danger meal-remove-btn' value="${row.id}">Delete</button></td>
                         <td><button type="button" class="btn btn-primary meal-edit-btn" data-bs-toggle="modal" data-bs-target="#save_MealModal" value="${row.id}">Edit</button></td>
                       </tr>`;
@@ -491,6 +491,8 @@
                 $("#inputMealName").val(meal.name);
                 $("#inputDescription").val(meal.description);
                 $("#inputPrice").val(meal.price);
+                $("#inputMealType").val(meal.mealType);
+                $("#base64Img").attr("src", meal.image);
               });
             });
           }, 1000);
@@ -504,7 +506,9 @@
           let jsonVar = {
             name: $("#inputMealName").val(),
             description: $("#inputDescription").val(),
-            price: price
+            price: price,
+            mealType: $("#inputMealType").val(),
+            image: current_image
           };
 
           $.ajax({
@@ -536,7 +540,9 @@
           let jsonVar = {
             name: $("#inputMealName").val(),
             description: $("#inputDescription").val(),
-            price: price
+            price: price,
+            mealType: $("#inputMealType").val(),
+            image: current_image
           };
 
           $.ajax({
@@ -559,8 +565,20 @@
         $("#inputMealName").val(null);
         $("#inputDescription").val(null);
         $("#inputPrice").val(0.0);
+        $("#file").val(null)
+        $("#base64Img").attr("src", null);
       });
     });
+
+    function encodeImgtoBase64(element) {
+      var file = element.files[0];
+      var reader = new FileReader();
+      reader.onloadend = function() {
+        $("#base64Img").attr("src", reader.result);
+        current_image = reader.result;
+      }
+      reader.readAsDataURL(file);
+    }
   </script>
 </head>
 <div>
@@ -795,6 +813,7 @@
             <th scope="col">Meal name</th>
             <th scope="col">Description</th>
             <th scope="col">Price</th>
+            <th scope="col">Type</th>
             <th scope="col">Delete</th>
             <th scope="col">Edit</th>
           </tr>
@@ -825,6 +844,24 @@
                     <div class="form-group col-md-6">
                       <label for="inputPrice">Price:</label>
                       <input type="text" class="form-control" id="inputPrice"/>
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group col-md-6">
+                      <label for="inputMealType">Meal type:</label>
+                      <select id="inputMealType" class="form-select">
+                        <option value="PIZZA">Pizza</option>
+                        <option value="DRINK">Drink</option>
+                        <option value="DESSERT">Dessert</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="file">Image:</label>
+                        <input type="file" id="file" onchange="encodeImgtoBase64(this)" name="image" accept="image/*" />
+                      <br><br>
+                      <img src="" id="base64Img" width="200">
                     </div>
                   </div>
                 </form>
