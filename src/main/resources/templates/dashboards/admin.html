@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html"
-      xmlns:justify-content="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 <head>
   <meta charset="ISO-8859-1">
   <title>Admin</title>
@@ -10,6 +9,7 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script type="text/javascript">
     var gbmap;
+    var current_image;
     $( document ).ready(function() {
       var current_user_id;
 
@@ -490,6 +490,7 @@
                 $("#inputMealName").val(meal.name);
                 $("#inputDescription").val(meal.description);
                 $("#inputPrice").val(meal.price);
+                $("#base64Img").attr("src", meal.image);
               });
             });
           }, 1000);
@@ -503,7 +504,8 @@
           let jsonVar = {
             name: $("#inputMealName").val(),
             description: $("#inputDescription").val(),
-            price: price
+            price: price,
+            image: current_image
           };
 
           $.ajax({
@@ -535,7 +537,8 @@
           let jsonVar = {
             name: $("#inputMealName").val(),
             description: $("#inputDescription").val(),
-            price: price
+            price: price,
+            image: current_image
           };
 
           $.ajax({
@@ -558,8 +561,20 @@
         $("#inputMealName").val(null);
         $("#inputDescription").val(null);
         $("#inputPrice").val(0.0);
+        $("#file").val(null)
+        $("#base64Img").attr("src", null);
       });
     });
+
+    function encodeImgtoBase64(element) {
+      var file = element.files[0];
+      var reader = new FileReader();
+      reader.onloadend = function() {
+        $("#base64Img").attr("src", reader.result);
+        current_image = reader.result;
+      }
+      reader.readAsDataURL(file);
+    }
   </script>
 </head>
 <div>
@@ -824,6 +839,14 @@
                     <div class="form-group col-md-6">
                       <label for="inputPrice">Price:</label>
                       <input type="text" class="form-control" id="inputPrice"/>
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="file">Image:</label>
+                        <input type="file" id="file" onchange="encodeImgtoBase64(this)" name="image" accept="image/*" />
+                      <br><br>
+                      <img src="" id="base64Img" width="200">
                     </div>
                   </div>
                 </form>

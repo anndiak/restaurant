@@ -1,23 +1,13 @@
 package com.application.restaurant.login;
 
-import com.application.restaurant.dao.UserRepository;
-import com.application.restaurant.model.User;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-@RestController
+@Controller
 @RequestMapping
 public class LoginController {
-
-    @Autowired
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
-
-    @Autowired
-    private UserRepository userRepository;
 
     @RequestMapping("/login")
     public String login(Model model) {
@@ -34,6 +24,4 @@ public class LoginController {
     public ModelAndView adminDashboard() {
         return new ModelAndView("admindashboard");
     }
-
-
 }

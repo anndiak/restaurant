@@ -135,77 +135,77 @@ public class AdminControllerIntegrationTest {
                 .andExpect(status().isOk());
     }
 
-    @Test
-    @WithMockUser(username = "test", password = "test", roles = "ADMIN")
-    public void addOrderToSystemTest() throws Exception
-    {
-        Order order = new Order();
-        order.setId("1");
-        order.setUserId("test");
-        order.setStatus(OrderStatus.IN_PROGRESS);
-        order.setTotalPrice(45.0);
-        List<Meal> mealList = new ArrayList<>();
-        mealList.add(new Meal("1","meal", "some meal", 3.4));
-        order.setMealList(mealList);
-        order.setNumOfTableOrReceiptPlace("test");
+//    @Test
+//    @WithMockUser(username = "test", password = "test", roles = "ADMIN")
+//    public void addOrderToSystemTest() throws Exception
+//    {
+//        Order order = new Order();
+//        order.setId("1");
+//        order.setUserId("test");
+//        order.setStatus(OrderStatus.IN_PROGRESS);
+//        order.setTotalPrice(45.0);
+//        List<Meal> mealList = new ArrayList<>();
+//        mealList.add(new Meal("1","meal", "some meal", 3.4));
+//        order.setMealList(mealList);
+//        order.setNumOfTableOrReceiptPlace("test");
+//
+//        mvc.perform( MockMvcRequestBuilders
+//                .post("/api/v1/admin/orders/add")
+//                .content(writeJsonAsString(order))
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .accept(MediaType.APPLICATION_JSON))
+//                .andExpect(MockMvcResultMatchers.jsonPath("$.id").exists())
+//                .andExpect(status().isOk());
+//    }
 
-        mvc.perform( MockMvcRequestBuilders
-                .post("/api/v1/admin/orders/add")
-                .content(writeJsonAsString(order))
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id").exists())
-                .andExpect(status().isOk());
-    }
+//    @Test
+//    @WithMockUser(username = "test", password = "test", roles = "ADMIN")
+//    public void getAllOrdersTest() throws Exception
+//    {
+//        Order order = new Order();
+//        order.setId("1");
+//        order.setUserId("test");
+//        order.setStatus(OrderStatus.IN_PROGRESS);
+//        order.setTotalPrice(45.0);
+//        List<Meal> mealList = new ArrayList<>();
+//        mealList.add(new Meal("1","meal", "some meal", 3.4));
+//        order.setMealList(mealList);
+//        order.setNumOfTableOrReceiptPlace("test");
+//
+//        mongoTemplate.save(order);
+//        mvc.perform( MockMvcRequestBuilders
+//                .get("/api/v1/admin/orders")
+//                .accept(MediaType.APPLICATION_JSON))
+//                .andDo(print())
+//                .andExpect(MockMvcResultMatchers.jsonPath("$[0].id").exists())
+//                .andExpect(status().isOk());
+//    }
 
-    @Test
-    @WithMockUser(username = "test", password = "test", roles = "ADMIN")
-    public void getAllOrdersTest() throws Exception
-    {
-        Order order = new Order();
-        order.setId("1");
-        order.setUserId("test");
-        order.setStatus(OrderStatus.IN_PROGRESS);
-        order.setTotalPrice(45.0);
-        List<Meal> mealList = new ArrayList<>();
-        mealList.add(new Meal("1","meal", "some meal", 3.4));
-        order.setMealList(mealList);
-        order.setNumOfTableOrReceiptPlace("test");
-
-        mongoTemplate.save(order);
-        mvc.perform( MockMvcRequestBuilders
-                .get("/api/v1/admin/orders")
-                .accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].id").exists())
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    @WithMockUser(username = "test", password = "test", roles = "ADMIN")
-    public void cancelRequestTest() throws Exception
-    {
-        Order order = new Order();
-        order.setId("1");
-        order.setUserId("test");
-        order.setStatus(OrderStatus.IN_PROGRESS);
-        order.setTotalPrice(45.0);
-        List<Meal> mealList = new ArrayList<>();
-        mealList.add(new Meal("1","meal", "some meal", 3.4));
-        order.setMealList(mealList);
-        order.setNumOfTableOrReceiptPlace("test");
-
-        Request request = new Request();
-        request.setId("1");
-        request.setRequestStatus(RequestStatus.IN_PROGRESS);
-        request.setUserId("test_id");
-        request.setOrder(order);
-
-        mongoTemplate.save(request);
-        mvc.perform( MockMvcRequestBuilders
-                .delete("/api/v1/admin/requests/1"))
-                .andExpect(status().isOk());
-    }
+//    @Test
+//    @WithMockUser(username = "test", password = "test", roles = "ADMIN")
+//    public void cancelRequestTest() throws Exception
+//    {
+//        Order order = new Order();
+//        order.setId("1");
+//        order.setUserId("test");
+//        order.setStatus(OrderStatus.IN_PROGRESS);
+//        order.setTotalPrice(45.0);
+//        List<Meal> mealList = new ArrayList<>();
+//        mealList.add(new Meal("1","meal", "some meal", 3.4));
+//        order.setMealList(mealList);
+//        order.setNumOfTableOrReceiptPlace("test");
+//
+//        Request request = new Request();
+//        request.setId("1");
+//        request.setRequestStatus(RequestStatus.IN_PROGRESS);
+//        request.setUserId("test_id");
+//        request.setOrder(order);
+//
+//        mongoTemplate.save(request);
+//        mvc.perform( MockMvcRequestBuilders
+//                .delete("/api/v1/admin/requests/1"))
+//                .andExpect(status().isOk());
+//    }
 
     @Test
     @WithMockUser(username = "test", password = "test", roles = "ADMIN")
