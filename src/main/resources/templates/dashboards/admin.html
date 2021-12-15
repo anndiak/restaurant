@@ -459,6 +459,7 @@
                         <td>${row.name}</td>
                         <td>${row.description}</td>
                         <td>${row.price}</td>
+                        <td>${row.mealType}</td>
                         <td><button type='button' class='btn btn-danger meal-remove-btn' value="${row.id}">Delete</button></td>
                         <td><button type="button" class="btn btn-primary meal-edit-btn" data-bs-toggle="modal" data-bs-target="#save_MealModal" value="${row.id}">Edit</button></td>
                       </tr>`;
@@ -490,6 +491,7 @@
                 $("#inputMealName").val(meal.name);
                 $("#inputDescription").val(meal.description);
                 $("#inputPrice").val(meal.price);
+                $("#inputMealType").val(meal.mealType);
                 $("#base64Img").attr("src", meal.image);
               });
             });
@@ -505,6 +507,7 @@
             name: $("#inputMealName").val(),
             description: $("#inputDescription").val(),
             price: price,
+            mealType: $("#inputMealType").val(),
             image: current_image
           };
 
@@ -538,6 +541,7 @@
             name: $("#inputMealName").val(),
             description: $("#inputDescription").val(),
             price: price,
+            mealType: $("#inputMealType").val(),
             image: current_image
           };
 
@@ -809,6 +813,7 @@
             <th scope="col">Meal name</th>
             <th scope="col">Description</th>
             <th scope="col">Price</th>
+            <th scope="col">Type</th>
             <th scope="col">Delete</th>
             <th scope="col">Edit</th>
           </tr>
@@ -839,6 +844,16 @@
                     <div class="form-group col-md-6">
                       <label for="inputPrice">Price:</label>
                       <input type="text" class="form-control" id="inputPrice"/>
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group col-md-6">
+                      <label for="inputMealType">Meal type:</label>
+                      <select id="inputMealType" class="form-select">
+                        <option value="PIZZA">Pizza</option>
+                        <option value="DRINK">Drink</option>
+                        <option value="DESSERT">Dessert</option>
+                      </select>
                     </div>
                   </div>
                   <div class="form-row">

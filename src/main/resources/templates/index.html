@@ -52,7 +52,7 @@
                 </div>
                 <!-- Start Pizza Menu -->
                 <div class="menu menu--is-visible" id="pizzaMenu" data-aos="fade-up">
-                    <tr th:each="meal : ${mealList}">
+                    <tr th:each="meal : ${pizzaList}">
                         <div class="item row align-items-center">
                             <div class="col-sm-3 pr-5">
                                 <img class="product-img" th:src="*{meal.image}"/>
@@ -72,82 +72,32 @@
                 <!-- End Pizza Menu -->
                 <!-- Start Coffee Menu -->
                 <div class="menu" id="coffeeMenu">
-                    <div class="item">
-                        <div class="item__header">
-                            <h3 class="item__title">Cappuccino</h3>
-                            <span class="item__dots"></span>
-                            <span class="item__price">$4</span>
+                    <tr th:each="meal : ${drinkList}">
+                        <div class="item">
+                            <div class="item__header">
+                                <h3 class="item__title" th:text="${meal.name}">Cappuccino</h3>
+                                <span class="item__dots"></span>
+                                <span class="item__price" th:text="'₴' + ${meal.price}">$4</span>
+                            </div>
+                            <p class="item__description" th:text="${meal.description}">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sunt quos harum
+                                officia eaque nobis ut.</p>
                         </div>
-                        <p class="item__description">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sunt quos harum
-                            officia eaque nobis ut.</p>
-                    </div>
-                    <div class="item">
-                        <div class="item__header">
-                            <h3 class="item__title">Iced Coffee</h3>
-                            <span class="item__dots"></span>
-                            <span class="item__price">$5</span>
-                        </div>
-                        <p class="item__description">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sunt quos harum
-                            officia eaque nobis ut.</p>
-                    </div>
-                    <div class="item">
-                        <div class="item__header">
-                            <h3 class="item__title">Café Latte</h3>
-                            <span class="item__dots"></span>
-                            <span class="item__price">$3</span>
-                        </div>
-                        <p class="item__description">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sunt quos harum
-                            officia eaque nobis ut.</p>
-                    </div>
-                    <div class="item">
-                        <div class="item__header">
-                            <h3 class="item__title">Espresso</h3>
-                            <span class="item__dots"></span>
-                            <span class="item__price">$4</span>
-                        </div>
-                        <p class="item__description">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sunt quos harum
-                            officia eaque nobis ut.</p>
-                    </div>
+                    </tr>
                 </div>
                 <!-- End Coffee Menu -->
                 <!-- Start Noodles Menu -->
                 <div class="menu" id="noodlesMenu">
-                    <div class="item">
-                        <div class="item__header">
-                            <h3 class="item__title">Chicken Noodles</h3>
-                            <span class="item__dots"></span>
-                            <span class="item__price">$16</span>
+                    <tr th:each="meal : ${dessertList}">
+                        <div class="item">
+                            <div class="item__header">
+                                <h3 class="item__title" th:text="${meal.name}">Chicken Noodles</h3>
+                                <span class="item__dots"></span>
+                                <span class="item__price" th:text="'₴' + ${meal.price}">$16</span>
+                            </div>
+                            <p class="item__description" th:text="${meal.description}">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sunt quos harum
+                                officia eaque nobis ut.</p>
                         </div>
-                        <p class="item__description">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sunt quos harum
-                            officia eaque nobis ut.</p>
-                    </div>
-                    <div class="item">
-                        <div class="item__header">
-                            <h3 class="item__title">Egg Noodles</h3>
-                            <span class="item__dots"></span>
-                            <span class="item__price">$12</span>
-                        </div>
-                        <p class="item__description">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sunt quos harum
-                            officia eaque nobis ut.</p>
-                    </div>
-                    <div class="item">
-                        <div class="item__header">
-                            <h3 class="item__title">Veg Noodles</h3>
-                            <span class="item__dots"></span>
-                            <span class="item__price">$10</span>
-                        </div>
-                        <p class="item__description">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sunt quos harum
-                            officia eaque nobis ut.</p>
-                    </div>
-                    <div class="item">
-                        <div class="item__header">
-                            <h3 class="item__title">Chuck Norris Noodles</h3>
-                            <span class="item__dots"></span>
-                            <span class="item__price">$20</span>
-                        </div>
-                        <p class="item__description">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sunt quos harum
-                            officia eaque nobis ut.</p>
-                    </div>
+                    </tr>
                 </div>
                 <!-- End Noodles Menu -->
             </div>

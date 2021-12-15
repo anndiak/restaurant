@@ -4,6 +4,8 @@ import com.application.restaurant.dao.MealRepository;
 import com.application.restaurant.model.Meal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -22,6 +24,12 @@ public class MealRepositoryImpl implements MealRepository {
     @Override
     public Meal getMealById(String id) {
         return mongoTemplate.findById(id, Meal.class);
+    }
+
+    @Override
+    public List<Meal> getMealByType(String type) {
+        Query query = Query.query(Criteria.where("mealType").is(type));
+        return mongoTemplate.find(query, Meal.class);
     }
 
     @Override

@@ -246,6 +246,7 @@ public class AdminController {
         meal.setName(newMeal.getName());
         meal.setDescription(newMeal.getDescription());
         meal.setPrice(newMeal.getPrice());
+        meal.setMealType(newMeal.getMealType());
         meal.setImage(newMeal.getImage());
         return meal;
     }
