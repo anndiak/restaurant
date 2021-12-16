@@ -43,6 +43,7 @@ public class AdminController {
     @Autowired
     private MealRepository mealRepository;
 
+    @GetMapping("/me")
     public User getAuthenticatedUser(){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         return (User)auth.getPrincipal();

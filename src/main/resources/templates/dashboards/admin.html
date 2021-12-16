@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/html"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
   <meta charset="ISO-8859-1">
   <title>Admin</title>
@@ -10,8 +12,18 @@
   <script type="text/javascript">
     var gbmap;
     var current_image;
+
+    function formatDate(date) {;
+      return date[0] + "-" + date[1] + "-" + date[2] + '<p>' + date[3] + ":" + date[4] + ":" +date[5] + '</p>';
+    }
+
     $( document ).ready(function() {
       var current_user_id;
+
+      $.get("/api/v1/admin/me", function (data) {
+        console.log(data);
+        $("#logged_user").text('Administrator, ' + data.firstName + ' ' + data.lastName)
+      });
 
       $("#loadUsersBtn").click(() => {
         $("#loadUsersBtn").html("<span class=\"spinner-border spinner-border-sm\" role=\"status\" aria-hidden=\"true\"></span>Loading...")
@@ -220,6 +232,7 @@
                         <td>${row.totalPrice}</td>
                         <td>${row.numOfTableOrReceiptPlace}</td>
                         <td>${row.status}</td>
+                        <td>${formatDate(row.createdAt)}</td>
                         <td><button type="button" class="btn btn-primary order-edit-btn" data-bs-toggle="modal" data-bs-target="#saveOrder_Modal" value="${row.id}">Edit</button></td>
                       </tr>`;
               }
@@ -369,7 +382,7 @@
                   role = "User"
                 }
 
-                if (row.requestStatus === "CANCELLED" || row.requestStatus === "ACCEPTED") {
+                if (row.requestStatus === "CANCELLED" || row.requestStatus === "ACCEPTED" || row.requestStatus === "PAID") {
                   rows += `<tr>
                         <th scope="row">${rowNumber++}</th>
                         <td>${getMealNamesFromOrder(order.mealList)}</td>
@@ -377,6 +390,7 @@
                         <td>${order.totalPrice}</td>
                         <td>${order.numOfTableOrReceiptPlace}</td>
                         <td>${row.requestStatus}</td>
+                        <td>${formatDate(row.createdAt)}</td>
                         <td><button type="button" class="btn btn-secondary" disabled">Accept</button></td>
                         <td><button type="button" class="btn btn-secondary" disabled">Edit</button></td>
                       </tr>`;
@@ -388,6 +402,7 @@
                         <td>${order.totalPrice}</td>
                         <td>${order.numOfTableOrReceiptPlace}</td>
                         <td>${row.requestStatus}</td>
+                        <td>${formatDate(row.createdAt)}</td>
                         <td><button id='acceptRequestBtn' type='button' class='btn btn-primary request-accept-btn' value="${row.id}">Accept</button></td>
                         <td><button id='cancelRequestBtn' type='button' class='btn btn-danger request-cancel-btn' value="${row.id}">Cancel</button></td>
                       </tr>`;
@@ -595,12 +610,13 @@
             <li class="nav-item" role="presentation">
               <button class="nav-link" id="requests-tab" data-bs-toggle="tab" data-bs-target="#requests" type="button" role="tab" aria-controls="requests" aria-selected="false">Requests</button>
             </li>
-          <li class="nav-item" role="presentation">
-            <button class="nav-link" id="meals-tab" data-bs-toggle="tab" data-bs-target="#meals" type="button" role="tab" aria-controls="meals" aria-selected="false">Meals</button>
-          </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="meals-tab" data-bs-toggle="tab" data-bs-target="#meals" type="button" role="tab" aria-controls="meals" aria-selected="false">Meals</button>
+            </li>
         </ul>
     </div>
     <div>
+      <span style="color:white;margin-right: 5px" id="logged_user">This is a paragraph.</span>
       <a href="/logout" class="btn btn-success" role="button" aria-disabled="true" style="margin-top: 2px;margin-right: 3px">Sigh out</a>
     </div>
   </div>
@@ -717,6 +733,7 @@
             <th scope="col">Total price</th>
             <th scope="col">Table or receipt place</th>
             <th scope="col">Order status</th>
+            <th scope="col">Created at</th>
             <th scope="col">Edit</th>
           </tr>
           </thead>
@@ -779,6 +796,7 @@
             <option value="IN_PROGRESS">In progress</option>
             <option value="ACCEPTED">Accepted</option>
             <option value="CANCELLED">Cancelled</option>
+            <option value="PAID">Paid</option>
           </select>
         </div>
 
@@ -791,6 +809,7 @@
             <th scope="col">Total price</th>
             <th scope="col">Table or receipt place</th>
             <th scope="col">Request status</th>
+            <th scope="col">Created at</th>
             <th scope="col">Accept</th>
             <th scope="col">Cancel</th>
           </tr>

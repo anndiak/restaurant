@@ -35,6 +35,7 @@ public class PaidOverseerScheduler {
                 .filter(request -> request.getRequestStatus() == RequestStatus.ACCEPTED)
                 .collect(Collectors.toList());
 
+        checkForExpiredRequests();
         checkForPaidRequests(acceptedRequests);
         checkForExpiredRequests(acceptedRequests);
 
@@ -73,6 +74,14 @@ public class PaidOverseerScheduler {
                 e.printStackTrace();
             }
         }
+    }
+
+    private void checkForExpiredRequests() {
+        requestRepository.getAllRequests()
+                .stream()
+                .filter(request -> request.getRequestStatus().equals(RequestStatus.IN_PROGRESS)
+                        && LocalDateTime.now().isAfter(request.getCreatedAt().plusMinutes(20)))
+                .forEach(request -> requestRepository.removeRequest(request));
     }
 
 }

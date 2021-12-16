@@ -8,6 +8,11 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script type="text/javascript">
+
+    function formatDate(date) {;
+      return date[0] + "-" + date[1] + "-" + date[2] + '<p>' + date[3] + ":" + date[4] + ":" +date[5] + '</p>';
+    }
+
     var gbmap;
     $( document ).ready(function() {
 
@@ -18,6 +23,7 @@
 
       $.get("/api/v1/registered_user/me", function (data) {
         authorized_user = data;
+        $("#logged_user").text('User, ' + data.firstName + ' ' + data.lastName)
       });
 
       $.get("/api/v1/registered_user/meals", function (data) {
@@ -44,7 +50,7 @@
               current_order_id = row.id;
 
 
-              // if ($("#filteringOrders").val() === row.status) {
+               if ($("#filteringOrders").val() === row.status) {
 
                     rows += `<tr>
                                         <th scope="row">${rowNumber++}</th>
@@ -52,8 +58,9 @@
                                         <td>${row.totalPrice}</td>
                                         <td>${row.numOfTableOrReceiptPlace}</td>
                                         <td>${row.status}</td>
+                                        <td>${formatDate(row.createdAt)}</td>
                                         </tr>`;
-//                }
+                }
             });
             $("#ordersList tbody").html(rows);
             $("#loadOrdersBtn").html("Load orders");
@@ -157,30 +164,33 @@
             data.forEach(function (row) {
               let order = row.order;
 
-//              if (($("#filteringRequests").val() === row.requestStatus)) {
-              if(row.requestStatus === "ACCEPTED") {
-                $.get("/pay?request_id=" + row.id, function (button_form) {
+              if (($("#filteringRequests").val() === row.requestStatus)) {
+                if (row.requestStatus === "ACCEPTED") {
+                  $.get("/pay?request_id=" + row.id, function (button_form) {
 
-                  let r = `<tr>
+                    let r = `<tr>
                         <th scope="row">${rowNumber++}</th>
                         <td>${getMealNamesFromOrder(order.mealList)}</td>
                         <td>${order.totalPrice}</td>
                         <td>${order.numOfTableOrReceiptPlace}</td>
                         <td>${row.requestStatus}</td>
+                        <td>${formatDate(row.createdAt)}</td>
                         <td>${button_form}</td>
                       </tr>`;
-                  $("#requestsList tbody").append(r);
-                });
-              } else {
-                let b = `<tr>
+                    $("#requestsList tbody").append(r);
+                  });
+                } else {
+                  let b = `<tr>
                         <th scope="row">${rowNumber++}</th>
                         <td>${getMealNamesFromOrder(order.mealList)}</td>
                         <td>${order.totalPrice}</td>
                         <td>${order.numOfTableOrReceiptPlace}</td>
                         <td>${row.requestStatus}</td>
+                        <td>${formatDate(row.createdAt)}</td>
                         <td></td>
                       </tr>`;
-                $("#requestsList tbody").append(b);
+                  $("#requestsList tbody").append(b);
+                }
               }
             });
 
@@ -217,6 +227,7 @@
     </ul>
   </div>
   <div>
+    <span style="color:white;margin-right: 5px" id="logged_user">This is a paragraph.</span>
     <a href="/logout" class="btn btn-success" role="button" aria-disabled="true" style="margin-top: 2px;margin-right: 3px">Sigh out</a>
   </div>
 </div>
@@ -226,14 +237,14 @@
 
   <button id="loadOrdersBtn" type="button" class="btn btn-primary">Load orders</button>
   <button id="addOrdersBtn" type="button" class="btn btn-primary open_modal_add_order" data-bs-toggle="modal" data-bs-target="#saveOrder_Modal">Add order</button>
-<!--  <div class="form-group col-md-3" style="margin-top: 10px; margin-bottom:10px;">-->
-<!--    <select id="filteringOrders" class="form-select">-->
-<!--      <option value="IN_PROGRESS">In progress</option>-->
-<!--      <option value="DONE">Done</option>-->
-<!--      <option value="DELIVERED">Delivered</option>-->
-<!--      <option value="CANCELLED">Cancelled</option>-->
-<!--    </select>-->
-<!--  </div>-->
+  <div class="form-group col-md-3" style="margin-top: 10px; margin-bottom:10px;">
+    <select id="filteringOrders" class="form-select">
+      <option value="IN_PROGRESS">In progress</option>
+      <option value="DONE">Done</option>
+      <option value="DELIVERED">Delivered</option>
+      <option value="CANCELLED">Cancelled</option>
+    </select>
+  </div>
   <table id="ordersList" class="table">
     <thead>
     <tr>
@@ -242,6 +253,7 @@
       <th scope="col">Total price</th>
       <th scope="col">Table or receipt place</th>
       <th scope="col">Order status</th>
+      <th scope="col">Created at</th>
     </tr>
     </thead>
     <tbody>
@@ -288,13 +300,14 @@
   <div class="tab-pane fade" id="requests" role="tabpanel" aria-labelledby="requests-tab">
     <button id="loadRequestsBtn" type="button" class="btn btn-primary">Load requests</button>
 
-<!--    <div class="form-group col-md-3" style="margin-top: 10px; margin-bottom:10px;">-->
-<!--      <select id="filteringRequests" class="form-select filter-users-select">-->
-<!--        <option value="IN_PROGRESS">In progress</option>-->
-<!--        <option value="ACCEPTED">Accepted</option>-->
-<!--        <option value="CANCELLED">Cancelled</option>-->
-<!--      </select>-->
-<!--    </div>-->
+    <div class="form-group col-md-3" style="margin-top: 10px; margin-bottom:10px;">
+      <select id="filteringRequests" class="form-select filter-users-select">
+        <option value="IN_PROGRESS">In progress</option>
+        <option value="ACCEPTED">Accepted</option>
+        <option value="CANCELLED">Cancelled</option>
+        <option value="PAID">Paid</option>
+      </select>
+    </div>
 
     <table id="requestsList" class="table">
       <thead>
@@ -304,6 +317,7 @@
         <th scope="col">Total price</th>
         <th scope="col">Table or receipt place</th>
         <th scope="col">Request status</th>
+        <th scope="col">Created at</th>
         <th scope="col">Payment option</th>
       </tr>
       </thead>

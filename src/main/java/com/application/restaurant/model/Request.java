@@ -13,14 +13,9 @@ import java.time.LocalDateTime;
 public class Request {
     @Id
     private String id;
-
     private String userId;
-
     private  Order order;
-
     private RequestStatus requestStatus;
-
     private LocalDateTime statusUpdatedAt = LocalDateTime.now();
-
     private LocalDateTime createdAt = LocalDateTime.now();
 }

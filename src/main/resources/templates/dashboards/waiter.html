@@ -8,9 +8,19 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script type="text/javascript">
+
+        function formatDate(date) {;
+            return date[0] + "-" + date[1] + "-" + date[2] + '<p>' + date[3] + ":" + date[4] + ":" +date[5] + '</p>';
+        }
+
         var gbmap;
         $( document ).ready(function() {
             var current_user_id;
+
+            $.get("/api/v1/waiter/me", function (data) {
+                console.log(data);
+                $("#logged_user").text('Waiter, ' + data.firstName + ' ' + data.lastName)
+            });
 
             $("#loadUsersBtn").click(() => {
                 $("#loadUsersBtn").html("<span class=\"spinner-border spinner-border-sm\" role=\"status\" aria-hidden=\"true\"></span>Loading...")
@@ -114,6 +124,7 @@
                                         <td>${row.totalPrice}</td>
                                         <td>${row.numOfTableOrReceiptPlace}</td>
                                         <td>${row.status}</td>
+                                        <td>${formatDate(row.createdAt)}</td>
                                         <td><button type="button" class="btn btn-primary order-edit-btn" data-bs-toggle="modal" data-bs-target="#saveOrder_Modal" value="${row.id}">Edit</button></td>
                                         </tr>`;
                                     } else {
@@ -124,6 +135,7 @@
                                         <td>${row.totalPrice}</td>
                                         <td>${row.numOfTableOrReceiptPlace}</td>
                                         <td>${row.status}</td>
+                                        <td>${formatDate(row.createdAt)}</td>
                                         <td><button type="button" class="btn btn-secondary" disabled">Edit</button></td>
                                         </tr>`;
                                     }
@@ -135,6 +147,7 @@
                                     <td>${row.totalPrice}</td>
                                     <td>${row.numOfTableOrReceiptPlace}</td>
                                     <td>${row.status}</td>
+                                    <td>${formatDate(row.createdAt)}</td>
                                     <td><button type="button" class="btn btn-secondary" disabled">Edit</button></td>
                                     </tr>`;
                                 }
@@ -273,6 +286,7 @@
         </ul>
     </div>
     <div>
+        <span style="color:white;margin-right: 5px" id="logged_user">This is a paragraph.</span>
         <a href="/logout" class="btn btn-success" role="button" aria-disabled="true" style="margin-top: 2px;margin-right: 3px">Sigh out</a>
     </div>
 </div>
@@ -318,6 +332,7 @@
                 <option value="DONE">Done</option>
                 <option value="DELIVERED">Delivered</option>
                 <option value="CANCELLED">Cancelled</option>
+                <option value="PAID">Paid</option>
             </select>
         </div>
         <table id="ordersList" class="table">
@@ -329,6 +344,7 @@
                 <th scope="col">Total price</th>
                 <th scope="col">Table or receipt place</th>
                 <th scope="col">Order status</th>
+                <th scope="col">Created at</th>
                 <th scope="col">Edit</th>
             </tr>
             </thead>
