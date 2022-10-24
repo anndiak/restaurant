@@ -24,13 +24,15 @@ public class EmailService implements EmailSender{
     @Async
     public void send(String to, String email) {
         final String username = "ann271101@gmail.com";
-        final String password = "Ann_diak271101";
+        final String password = "hasevbbqhljemrec";
 
         Properties prop = new Properties();
         prop.put("mail.smtp.host", "smtp.gmail.com");
         prop.put("mail.smtp.port", "587");
         prop.put("mail.smtp.auth", "true");
+        prop.put("mail.smtp.ssl.trust", "smtp.gmail.com");
         prop.put("mail.smtp.starttls.enable", "true"); //TLS
+        prop.put("mail.smtp.ssl.protocols","TLSv1.2");
 
         Session session = Session.getInstance(prop,
                 new javax.mail.Authenticator() {
@@ -42,7 +44,7 @@ public class EmailService implements EmailSender{
         try {
 
             Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress("Bistrot Francais Administration"));
+            message.setFrom(new InternetAddress("ann271101@gmail.com"));
             message.setRecipients(
                     Message.RecipientType.TO,
                     InternetAddress.parse(to)
