@@ -10,7 +10,6 @@ This application for restaurant`s stuff.
 
 Main view:
 ![image](https://user-images.githubusercontent.com/64887157/212579454-9b823c43-e88a-4978-aca8-a239eb987210.png)
-![image](https://user-images.githubusercontent.com/64887157/212579476-9cb3bdda-5c65-4b96-92cc-86cb52381d90.png)
 
 Administrator view:
 ![image](https://user-images.githubusercontent.com/64887157/212579550-2cd8ea82-59b3-4280-80ce-efa7f7f0504e.png)
