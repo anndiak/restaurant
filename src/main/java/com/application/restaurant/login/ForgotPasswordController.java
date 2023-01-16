@@ -1,30 +1,26 @@
 package com.application.restaurant.login;
 
 import com.application.restaurant.configuration.Utility;
+import com.application.restaurant.email.EmailSender;
 import com.application.restaurant.model.User;
 import com.application.restaurant.service.UserService;
+import lombok.AllArgsConstructor;
 import net.bytebuddy.utility.RandomString;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
-import java.io.UnsupportedEncodingException;
 
 @Controller
+@AllArgsConstructor
 public class ForgotPasswordController {
 
-    @Autowired
-    private JavaMailSender mailSender;
+    private final EmailSender emailSender;
 
     @Autowired
     private UserService userService;
@@ -47,23 +43,12 @@ public class ForgotPasswordController {
 
         } catch (UsernameNotFoundException ex) {
             model.addAttribute("error", ex.getMessage());
-        } catch (UnsupportedEncodingException | MessagingException e) {
-            model.addAttribute("error", "Error while sending email");
         }
 
         return "forgot_password_form";
     }
 
-    public void sendEmail(String recipientEmail, String link)
-            throws MessagingException, UnsupportedEncodingException {
-        MimeMessage message = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message);
-
-        helper.setFrom("bistrot.francais@gmail.com", "Bistrot Francais Administration");
-        helper.setTo(recipientEmail);
-
-        String subject = "Here's the link to reset your password";
-
+    public void sendEmail(String recipientEmail, String link) {
         String content = "<p>Hello,</p>"
                 + "<p>You have requested to reset your password.</p>"
                 + "<p>Click the link below to change your password:</p>"
@@ -72,11 +57,10 @@ public class ForgotPasswordController {
                 + "<p>Ignore this email if you do remember your password, "
                 + "or you have not made the request.</p>";
 
-        helper.setSubject(subject);
 
-        helper.setText(content, true);
-
-        mailSender.send(message);
+        emailSender.send(
+                recipientEmail,
+                content);
     }
 
 

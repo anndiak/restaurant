@@ -32,6 +32,7 @@ public class LiqPayController {
         params.put("order_id", request.getId());
         params.put("version", "3");
         params.put("expired_date", formatter.format(localDateTime));
+        params.put("language", "en");
         LiqPay liqpay = new LiqPay(PUBLIC_KEY, PRIVATE_KEY);
         return liqpay.cnb_form(params);
     }
