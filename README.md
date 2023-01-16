@@ -20,5 +20,5 @@ Payment using LiqPay:
 ![image](https://user-images.githubusercontent.com/64887157/212579592-ff30965c-8cb2-453a-93cf-262ab1b785b6.png)
 
 
-Payment using dev mode
+Payment view in dev mode
 ![image](https://user-images.githubusercontent.com/64887157/212579610-f6eebdff-20e0-4590-8915-b13c31e190b6.png)
